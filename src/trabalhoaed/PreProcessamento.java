@@ -28,6 +28,7 @@ public class PreProcessamento {
 
     public static void main(String[] args) {
 
+        /// TESTES
         String teste = "qwertyuiopasdfghjklqwdqwdqwdqw";
 
         if (teste.length() > 20) {
@@ -53,32 +54,11 @@ public class PreProcessamento {
         System.out.println("Hash: " + valor);
         System.out.println("n: " + n);
 
-        if (true) {
+        if (false) {
             return;
         }
+        /// FIM TESTES
 
-//        String teste = "Anthropology /ænθrɵˈpɒlədʒi/ is the scientific study of humans, past and present, that draws and builds upon knowledge from the social sciences, life sciences, and humanities.Since the work of Franz Boas and Bronisław Malinowski in the late 19th and early 20th centuries, social anthropology in Great Britain and cultural anthropology in the US have been distinguished from ethnology and from other social sciences by its emphasis on cross-cultural comparisons, long-term in-depth examination of context, and the importance it places on participant-observation or experiential immersion in the area of research. ";
-//        String teste2 = teste.replaceAll("[.,/\\\\()\\[\\]]", " ");
-//        String[] teste3 = teste2.split(" ");
-//        System.out.println(teste);
-//        System.out.println(teste2);
-//        System.out.println(teste2.toLowerCase());
-//        System.out.println("Palavras: " + teste3.length);
-//        int i = 0;
-//        for (String s : teste3) {
-//            System.out.println("[" + i + "] " + s);
-//            i++;
-//        }
-//        Pattern pat = Pattern.compile("[a-zA-Z]");
-//
-//        String[] encontrados = pat.split(teste);
-//
-//        int k = 0;
-//        for (String s : encontrados) {
-//            System.out.println("[" + k + "] " + s);
-//            k++;
-//        }
-//        return;
         FileInputStream stream = null;
 
         try {
@@ -160,12 +140,25 @@ public class PreProcessamento {
                             s = s + ' ';
                         }
 
+                        if (s.length() != 20) {
+                            System.out.println(s);
+                            keyboard.next();
+                        }
+
 //                        System.out.println("Ajustada: " + s);
                         byte[] bb = s.getBytes();
 
-                        int valorHash = MurmurHash.murmurHash2(bb, 541);
+                        int valorHash = MurmurHash.murmurhash3x8632(bb, 0, bb.length, 13);
 
-                        int nn = Math.abs(valorHash % (TAMANHO_TABELA));
+                        long UnsignedValor = valorHash & 0x00000000ffffffffL;
+
+//                        System.out.println("  Valor: " + valorHash);
+//                        System.out.println(" UValor: " + UnsignedValor);
+//                        System.out.println(" IValor: " + ((int) UnsignedValor));
+//                        System.out.println(" MValor: " + (UnsignedValor % TAMANHO_TABELA));
+//                        System.out.println("IMValor: " + ((int) (UnsignedValor % TAMANHO_TABELA)));
+//                        int nn = Math.abs(valorHash % TAMANHO_TABELA);
+                        int nn = (int) (UnsignedValor % TAMANHO_TABELA);
 
 //                        System.out.println("hash: " + nn);
 //                        keyboard.next();
