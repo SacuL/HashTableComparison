@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author Lucas
  */
-public class Palavra {
+public class PalavraList implements InterfacePalavra {
 
     private String texto;
     private final ArrayList<Par> documentos;
@@ -18,7 +18,7 @@ public class Palavra {
     /**
      * Construtor: cria um novo ArrayList de pares e insere um novo par.
      */
-    public Palavra(String texto, int id_documento) {
+    public PalavraList(String texto, int id_documento) {
         this.texto = texto;
         documentos = new ArrayList<>();
         documentos.add(new Par(id_documento));
@@ -62,7 +62,7 @@ public class Palavra {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Palavra other = (Palavra) obj;
+        final PalavraList other = (PalavraList) obj;
         return Objects.equals(this.texto, other.texto);
     }
 
@@ -75,6 +75,13 @@ public class Palavra {
             System.out.print(p.id_documento + " - ");
         }
         System.out.println();
+    }
+
+    public int numeroDocumentos() {
+        if (this.documentos != null) {
+            return this.documentos.size();
+        }
+        return 0;
     }
 
 }

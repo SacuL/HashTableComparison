@@ -1,6 +1,7 @@
 package trabalhoaed;
 
-import Estruturas.Palavra;
+import Estruturas.PalavraFactory;
+import Estruturas.PalavraList;
 import Estruturas.TabelaHash;
 import FuncoesHash.InterfaceHashing;
 import FuncoesHash.MurmurHash;
@@ -36,12 +37,12 @@ public class PreProcessamento {
         /////////////////////
         /// Configurações ///
         /////////////////////
-        int TAMANHO_TABELA = 1000000;
-        int LIMITE = 400000;
+        int TAMANHO_TABELA = 500000;
+        int LIMITE = 500000;
         int SEED = 13;
         // int TOTAL_LINHAS = 4305030;
 
-        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, funcaoHashing);
+        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, funcaoHashing, PalavraFactory.TipoPalavra.MAP);
 
         int primeiroEspaco;
         int segundoEspaco;
@@ -136,7 +137,6 @@ public class PreProcessamento {
 
 //        Palavra p = tbHash.buscarPalavra("house");
 //        p.imprimePares();
-
     }
 
 }
