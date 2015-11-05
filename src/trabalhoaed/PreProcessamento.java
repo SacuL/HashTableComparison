@@ -1,24 +1,17 @@
 package trabalhoaed;
 
+import Estruturas.Palavra;
 import Estruturas.TabelaHash;
-import org.apache.commons.lang3.StringUtils;
+import FuncoesHash.InterfaceHashing;
 import FuncoesHash.MurmurHash;
+import Util.Strings;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.Normalizer;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -28,36 +21,7 @@ public class PreProcessamento {
 
     public static void main(String[] args) {
 
-        /// TESTES
-        String teste = "qwertyuiopasdfghjklqwdqwdqwdqw";
-
-        if (teste.length() > 20) {
-            teste = teste.substring(0, 20);
-        }
-        while (teste.length() < 20) {
-            teste = teste + ' ';
-        }
-
-        byte[] b = teste.getBytes();
-
-        System.out.println("b= " + b);
-        System.out.println("tamanho= " + b.length);
-
-        for (byte y : b) {
-            System.out.println("Byte: " + y);
-        }
-
-        int valor = MurmurHash.murmurhash3x8632(b, 0, 4, 1);
-
-        int n = valor % 100;
-
-        System.out.println("Hash: " + valor);
-        System.out.println("n: " + n);
-
-        if (false) {
-            return;
-        }
-        /// FIM TESTES
+        InterfaceHashing funcaoHashing = new MurmurHash();
 
         FileInputStream stream = null;
 
@@ -69,31 +33,32 @@ public class PreProcessamento {
         }
         BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
+        /////////////////////
+        /// Configurações ///
+        /////////////////////
+        int TAMANHO_TABELA = 1000000;
+        int LIMITE = 400000;
+        int SEED = 13;
+        // int TOTAL_LINHAS = 4305030;
+
+        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, funcaoHashing);
+
         int primeiroEspaco;
         int segundoEspaco;
-
-        int TAMANHO_TABELA = 3463179;
-        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA);
-//        HashSet<String> hashSet = new HashSet<>(3463179, 1);
-        Scanner keyboard = new Scanner(System.in);
         int numero_de_palavras = 0;
-
         int numero_de_palavras_puladas = 0;
-
         int contaLinhas = 0;
         int porcentagem = -1;
+        int colisoes = 0;
+
         try {
             String linha;
-            while ((linha = in.readLine()) != null) {
-                if (contaLinhas % 43051 == 0) {
+            while ((linha = in.readLine()) != null && contaLinhas < LIMITE) {
+
+                if (contaLinhas % (LIMITE / 100) == 0) {
                     porcentagem++;
                     System.out.println(porcentagem + "% ...");
-
-                    System.out.println("Colisoes: " + tbHash.colisoes());
-
-//                    keyboard.next();
                 }
-                contaLinhas++;
 
                 if (linha.length() < 77) {
                     System.out.println("Linha nao usada: " + linha);
@@ -108,64 +73,35 @@ public class PreProcessamento {
                     /// Seleciona a parte do texto entre as aspas
                     String texto = linha.substring(primeiroEspaco + segundoEspaco + 3, linha.length() - 6);
 
-                    /// Remove acentos
-                    // texto = SemAcento(texto); // Muito ruim
-                    // texto = StringUtils.stripAccents(texto); // Muito ruim
-                    texto = Normaliza(texto);
-
-                    /// Remove pontuação
-                    texto = texto.replaceAll("[.,/\\\\()\\[\\]:\";]", " ");
-
-                    /// lowerCase
-                    // texto = StringUtils.lowerCase(texto); //Desempenho similar
-                    texto = texto.toLowerCase();
+                    /// Normaliza: remove acentos, pontuação e caixa alta
+                    texto = Strings.NormalizaTexto(texto);
 
                     /// Encontra as palavras
                     String[] palavras = texto.split(" ");
 
                     numero_de_palavras = numero_de_palavras + palavras.length;
 
-                    for (String s : palavras) {
+                    for (String string : palavras) {
+                        String s = string;
 
                         if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty()) {
                             numero_de_palavras_puladas++;
                             continue;
                         }
 
-//                        System.out.println("Palavra: " + s);
-                        if (s.length() > 20) {
-                            s = s.substring(0, 20);
+                        byte[] bb = Strings.BytePalavraNormalizada(s);
+
+                        int valorHash = funcaoHashing.hash(bb, 0, bb.length, SEED);
+
+                        int valorComMod = (valorHash % TAMANHO_TABELA);
+
+                        if (tbHash.insere(s, contaLinhas, valorComMod)) {
+                            colisoes++;
                         }
-                        while (s.length() < 20) {
-                            s = s + ' ';
-                        }
-
-                        if (s.length() != 20) {
-                            System.out.println(s);
-                            keyboard.next();
-                        }
-
-//                        System.out.println("Ajustada: " + s);
-                        byte[] bb = s.getBytes();
-
-                        int valorHash = MurmurHash.murmurhash3x8632(bb, 0, bb.length, 13);
-
-                        long UnsignedValor = valorHash & 0x00000000ffffffffL;
-
-//                        System.out.println("  Valor: " + valorHash);
-//                        System.out.println(" UValor: " + UnsignedValor);
-//                        System.out.println(" IValor: " + ((int) UnsignedValor));
-//                        System.out.println(" MValor: " + (UnsignedValor % TAMANHO_TABELA));
-//                        System.out.println("IMValor: " + ((int) (UnsignedValor % TAMANHO_TABELA)));
-//                        int nn = Math.abs(valorHash % TAMANHO_TABELA);
-                        int nn = (int) (UnsignedValor % TAMANHO_TABELA);
-
-//                        System.out.println("hash: " + nn);
-//                        keyboard.next();
-                        tbHash.insere(nn);
                     }
-                    //hashSet.addAll(Arrays.asList(palavras));
                 }
+
+                contaLinhas++;
 
             }
         } catch (IOException ex) {
@@ -173,28 +109,34 @@ public class PreProcessamento {
         }
 
         //System.out.println("Tamanho do hashset: " + hashSet.size());
-        System.out.println("Numero de linhas no arquivo: " + contaLinhas);
-        System.out.println("Colisoes: " + tbHash.colisoes());
-        System.out.println("Numero de palavras: " + numero_de_palavras);
-        System.out.println("Numero de palavras puladas: " + numero_de_palavras_puladas);
-        System.out.println("Numero de espaços vazios: " + tbHash.vazios());
+        System.out.println(
+                "Numero de  linhas  arquivo: " + contaLinhas);
+        System.out.println(
+                "Numero     de     colisoes: " + colisoes);
+        System.out.println(
+                "Numero de palavras  unicas: " + tbHash.getNumeroDePalavrasUnicas());
+        System.out.println(
+                "Porcentual   de   colisões: " + (100 * colisoes / tbHash.getNumeroDePalavrasUnicas()));
+        System.out.println(
+                "Numero total de   palavras: " + numero_de_palavras);
+        System.out.println(
+                "Numero de palavras puladas: " + numero_de_palavras_puladas);
+        System.out.println(
+                "Numero de palavras inserid: " + (numero_de_palavras - numero_de_palavras_puladas));
+//        System.out.println(
+//                "Numero de espaços vazios: " + tbHash.vazios());
+//        System.out.println(
+//                "Numero de espaços preenc: " + tbHash.preenchidos());
+        System.out.println(
+                "Numero de espaços totais: " + (TAMANHO_TABELA));
 
-    }
+        tbHash.vazio();
+        tbHash.tamanhoArrayPalavras();
+        tbHash.tamanhoArrayPares();
 
-    static Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+//        Palavra p = tbHash.buscarPalavra("house");
+//        p.imprimePares();
 
-    public static String SemAcento(String str) {
-        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
-
-        return pattern.matcher(nfdNormalizedString).replaceAll("");
-    }
-
-    /**
-     * Possui um melhor desempenho que a função "SemAcento"
-     */
-    public static String Normaliza(String string) {
-        string = Normalizer.normalize(string, Normalizer.Form.NFD);
-        return string.replaceAll("\\p{M}", "");
     }
 
 }

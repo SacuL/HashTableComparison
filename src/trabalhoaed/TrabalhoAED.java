@@ -1,6 +1,6 @@
 package trabalhoaed;
 
-import Estruturas.Par;
+import Estruturas.Palavra;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
