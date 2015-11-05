@@ -18,7 +18,7 @@ public class Par {
      *
      */
     public Par(int id_documento) {
-        this.contador = 0;
+        this.contador = 1;
         this.id_documento = id_documento;
     }
 

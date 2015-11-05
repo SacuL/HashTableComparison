@@ -1,10 +1,9 @@
 package trabalhoaed;
 
 import Estruturas.PalavraFactory;
-import Estruturas.PalavraList;
 import Estruturas.TabelaHash;
+import FuncoesHash.FuncaoHashingFactory;
 import FuncoesHash.InterfaceHashing;
-import FuncoesHash.MurmurHash;
 import Util.Strings;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -12,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 /**
  *
@@ -21,8 +19,6 @@ import java.util.Scanner;
 public class PreProcessamento {
 
     public static void main(String[] args) {
-
-        InterfaceHashing funcaoHashing = new MurmurHash();
 
         FileInputStream stream = null;
 
@@ -42,7 +38,10 @@ public class PreProcessamento {
         int SEED = 13;
         // int TOTAL_LINHAS = 4305030;
 
-        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, funcaoHashing, PalavraFactory.TipoPalavra.MAP);
+        FuncaoHashingFactory.Funcao tipoFuncao = FuncaoHashingFactory.Funcao.MURMURHASHING3;
+
+        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, tipoFuncao, PalavraFactory.TipoPalavra.MAP);
+        InterfaceHashing funcaoHashing = FuncaoHashingFactory.criaHashing(tipoFuncao);
 
         int primeiroEspaco;
         int segundoEspaco;

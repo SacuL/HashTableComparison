@@ -1,9 +1,9 @@
 package Estruturas;
 
 import FuncoesHash.InterfaceHashing;
-import FuncoesHash.MurmurHash;
+
 import Util.Strings;
-import java.text.DecimalFormat;
+import FuncoesHash.FuncaoHashingFactory;
 import java.util.ArrayList;
 
 /**
@@ -24,9 +24,9 @@ public class TabelaHash {
     /**
      * Construtor
      */
-    public TabelaHash(int tam, int seed, InterfaceHashing funcaoHashing, PalavraFactory.TipoPalavra tipoPalavra) {
+    public TabelaHash(int tam, int seed, FuncaoHashingFactory.Funcao funcaoHashing, PalavraFactory.TipoPalavra tipoPalavra) {
         this.tipoPalavra = tipoPalavra;
-        this.funcaoHashing = funcaoHashing;
+        this.funcaoHashing = FuncaoHashingFactory.criaHashing(funcaoHashing);
         this.TAMANHO = tam;
         this.SEED = seed;
         this.PALAVRAS = 0;

@@ -23,7 +23,7 @@ public class PalavraMap implements InterfacePalavra {
     public PalavraMap(String texto, int id_documento) {
         this.texto = texto;
         this.documentos = new HashMap<>();
-        this.documentos.put(id_documento, 0);
+        this.documentos.put(id_documento, 1);
     }
 
     /**
@@ -35,7 +35,7 @@ public class PalavraMap implements InterfacePalavra {
         if (this.documentos.containsKey(id_documento)) {
             this.documentos.put(id_documento, documentos.get(id_documento) + 1);
         } else {
-            this.documentos.put(id_documento, 0);
+            this.documentos.put(id_documento, 1);
         }
     }
 
