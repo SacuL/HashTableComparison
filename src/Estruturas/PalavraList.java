@@ -1,6 +1,7 @@
 package Estruturas;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -91,4 +92,13 @@ public class PalavraList implements InterfacePalavra {
         return 0;
     }
 
+    /**
+     * Retorna um iterator para percorrer a estrutura
+     */
+    public Iterator getIterator() {
+        if (this.documentos == null || this.documentos.isEmpty()) {
+            return null;
+        }
+        return this.documentos.iterator();
+    }
 }

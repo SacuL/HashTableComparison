@@ -1,6 +1,7 @@
 package Estruturas;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,6 +40,9 @@ public class PalavraMap implements InterfacePalavra {
         }
     }
 
+    /*
+     * Retorna a palavra em sí;
+     */
     public String getTexto() {
         return texto;
     }
@@ -89,6 +93,17 @@ public class PalavraMap implements InterfacePalavra {
      */
     public int numeroOcorrenciasPalavraNoDocumento(int id_documento) {
         return this.documentos.get(id_documento);
+    }
+
+    /**
+     * Retorna um iterator para percorrer a estrutura
+     */
+    public Iterator getIterator() {
+        if (this.documentos == null || this.documentos.isEmpty()) {
+            return null;
+        }
+
+        return this.documentos.entrySet().iterator();
     }
 
 }

@@ -8,13 +8,13 @@ public class PalavraFactory {
 
     public enum TipoPalavra {
 
-        MAP, LIST
+        MAP, LIST_INCOMPLETO
     }
 
     public static InterfacePalavra criaPalavra(String texto, int id_documento, TipoPalavra tipoPalavra) {
 
         switch (tipoPalavra) {
-            case LIST:
+            case LIST_INCOMPLETO:
                 return new PalavraList(texto, id_documento);
 
             case MAP:

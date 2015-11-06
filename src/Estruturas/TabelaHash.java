@@ -129,6 +129,13 @@ public class TabelaHash {
     }
 
     /**
+     * Retorna o número de termos distintos do documento
+     */
+    public int numeroTermosDistintosDocumento(int id_documento) {
+        return this.documentos.get(id_documento).getNumeroDeTermosDistintos();
+    }
+
+    /**
      * Calcula o log do numero total de documentos e guarda
      */
     public void calculaLog10NumeroTotalDeDocumentos() {
@@ -142,9 +149,45 @@ public class TabelaHash {
         return this.logDoTotalDeDocumentos;
     }
 
+    /**
+     * Retorna quantos documentos a tabela possui
+     */
+    public int numeroDocumentosTotais() {
+        return this.documentos.size();
+    }
+
+    /**
+     * Retorna a quantidade de palavras de uma posicao do array
+     */
+    public int getNumeroPalavras(int indice_palavra) {
+        ArrayList l = array[indice_palavra];
+        if (l == null) {
+            return 0;
+        } else {
+            return l.size();
+        }
+    }
+
     ///////////////////////////////////////////
     //// Funções para coletar estatísticas ////
     ///////////////////////////////////////////
+    /**
+     * Retorna quantas posições tiveram ao menos uma colisão
+     */
+    public int posicoesComColisao() {
+        int contador = 0;
+        for (int i = 0; i < TAMANHO_TABELA; i++) {
+            if (array[i] != null) {
+                if (array[i].size() > 1) {
+                    contador++;
+                }
+
+            }
+
+        }
+        return contador;
+    }
+
     /**
      * Retorna quantos % do array esta vazio.
      */

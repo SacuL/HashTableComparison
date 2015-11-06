@@ -181,6 +181,17 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         publish("Numero de palavras inserid: " + (numero_de_palavras - numero_de_palavras_puladas));
         publish("Numero de espaços totais: " + (tamanhoTabela));
 
+        double qtd = ((double) colisoes / (double) tamanhoTabela);
+        publish(" >> Quantidade Média de Colisões Totais: " + qtd);
+
+        double posComCol = tbHash.posicoesComColisao();
+        if (posComCol != 0) {
+            double distMed = ((double) colisoes / tbHash.posicoesComColisao());
+            publish(" >> Distribuição Média das Colisões: " + distMed);
+        } else {
+            publish(" >> Distribuição Média das Colisões: não houve colisão!");
+        }
+
         endTime = System.currentTimeMillis();
         return tbHash;
     }

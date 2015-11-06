@@ -6,7 +6,15 @@ import FuncoesHash.FuncaoHashingFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.SwingWorker.StateValue;
 
 /**
@@ -66,6 +74,7 @@ public class Principal extends javax.swing.JFrame {
         tipoPalavra = new javax.swing.JComboBox();
         funcaoHashing = new javax.swing.JComboBox();
         botaoIniciar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         log = new javax.swing.JTextArea();
@@ -136,6 +145,13 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Estatísticas");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -155,6 +171,8 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(limiteDocumentos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoIniciar))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -186,7 +204,9 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(funcaoHashing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
-                .addComponent(botaoIniciar))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botaoIniciar)
+                    .addComponent(jButton1)))
         );
 
         log.setEditable(false);
@@ -399,6 +419,66 @@ public class Principal extends javax.swing.JFrame {
         buscarWorker.execute();
     }//GEN-LAST:event_botaoBuscarPalavraActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (this.tbHash == null) {
+            
+            
+        }
+        
+        
+
+//        JFrame frame = new JFrame("Índice invertido de busca");
+//        final JFXPanel fxPanel = new JFXPanel();
+//        frame.add(fxPanel);
+//        frame.setSize(700, 500);
+//        frame.setLocationRelativeTo(null);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame.setVisible(true);
+//
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                initFX(fxPanel);
+//            }
+//        });
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void initFX(JFXPanel fxPanel) {
+        // This method is invoked on JavaFX thread
+        Scene scene = createScene();
+        fxPanel.setScene(scene);
+    }
+
+    private Scene createScene() {
+
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        final BarChart<String, Number> bc
+                = new BarChart<String, Number>(xAxis, yAxis);
+        bc.setTitle("Distribuição de Colisões");
+        xAxis.setLabel("Posição");
+        yAxis.setLabel("Número de colisões");
+
+        XYChart.Series series1 = new XYChart.Series();
+
+        int tamTabela = (Integer.parseInt(tamanhoTabela.getText()));
+
+        for (int i = 0; i < tamTabela; i++) {
+
+            int tamanho = tbHash.getNumeroPalavras(i);
+
+            series1.getData().add(new XYChart.Data(String.valueOf(i), tamanho));
+
+        }
+
+        Scene scene = new Scene(bc, 1200, 800);
+        bc.setBarGap(0);
+        bc.getData().addAll(series1);
+
+        return scene;
+    }
+
     /**
      * Recebe a tabela Hash criada pela worker thread
      */
@@ -447,6 +527,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton botaoBuscarPalavra;
     private javax.swing.JButton botaoIniciar;
     private javax.swing.JComboBox funcaoHashing;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
