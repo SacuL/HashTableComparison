@@ -8,7 +8,7 @@ public class PalavraFactory {
 
     public enum TipoPalavra {
 
-        LIST, MAP
+        MAP, LIST
     }
 
     public static InterfacePalavra criaPalavra(String texto, int id_documento, TipoPalavra tipoPalavra) {

@@ -84,4 +84,11 @@ public class PalavraList implements InterfacePalavra {
         return 0;
     }
 
+    /**
+     *
+     */
+    public int numeroOcorrenciasPalavraNoDocumento(int id_documento) {
+        return 0;
+    }
+
 }

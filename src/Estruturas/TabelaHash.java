@@ -14,23 +14,32 @@ import java.util.ArrayList;
 public class TabelaHash {
 
     private final int SEED;
-    private final int TAMANHO;
+    private final int TAMANHO_TABELA;
     private final InterfaceHashing funcaoHashing;
     private final PalavraFactory.TipoPalavra tipoPalavra;
     private int PALAVRAS;
+    private final ArrayList<Documento> documentos;
+    private double logDoTotalDeDocumentos;
 
     final private ArrayList<InterfacePalavra>[] array;
 
     /**
      * Construtor
      */
-    public TabelaHash(int tam, int seed, FuncaoHashingFactory.Funcao funcaoHashing, PalavraFactory.TipoPalavra tipoPalavra) {
+    public TabelaHash(int tam, int limite, int seed, FuncaoHashingFactory.Funcao funcaoHashing, PalavraFactory.TipoPalavra tipoPalavra) {
         this.tipoPalavra = tipoPalavra;
         this.funcaoHashing = FuncaoHashingFactory.criaHashing(funcaoHashing);
-        this.TAMANHO = tam;
+        this.TAMANHO_TABELA = tam;
         this.SEED = seed;
         this.PALAVRAS = 0;
-        array = (ArrayList<InterfacePalavra>[]) new ArrayList[tam];
+        this.array = (ArrayList<InterfacePalavra>[]) new ArrayList[tam];
+        if (limite > 0) {
+            this.documentos = new ArrayList<>(limite);
+            this.logDoTotalDeDocumentos = Math.log10(limite);
+        } else {
+            this.documentos = new ArrayList<>();
+        }
+
     }
 
     /**
@@ -67,35 +76,101 @@ public class TabelaHash {
         return this.PALAVRAS;
     }
 
+    /**
+     * Busca uma palavra no array
+     */
+    public InterfacePalavra buscarPalavra(String palavra) {
+
+        // Normaliza: remove acentos, pontuação e caixa alta
+        String texto = Strings.NormalizaTexto(palavra);
+
+        // Aplica normalização
+        byte[] bb = Strings.BytePalavraNormalizada(texto);
+
+        // Calcula a posicao usando uma função de hashing
+        int valorHash = funcaoHashing.hash(bb, 0, bb.length, 13);
+
+        // Limita o valor pelo tamanho da tabela
+        int valorComMod = (valorHash % TAMANHO_TABELA);
+
+        if (array[valorComMod] != null) {
+            for (InterfacePalavra p : array[valorComMod]) {
+                if (texto.equals(p.getTexto())) {
+                    return p;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Documento getDocumento(int id_documento) {
+        return documentos.get(id_documento);
+    }
+
+    public void insereDocumento(Documento doc, int id_documento) {
+        this.documentos.add(id_documento, doc);
+    }
+
+    /**
+     * Retorna o numero de ocorrencias de uma palavra em um documento
+     */
+    public int ocorrenciasPalavraNoDocumento(String palavra, int posicaoPalavra, int id_documento) {
+
+        if (array[posicaoPalavra] != null) {
+            for (InterfacePalavra p : array[posicaoPalavra]) {
+                if (p.getTexto().equals(palavra)) {
+                    return p.numeroOcorrenciasPalavraNoDocumento(id_documento);
+                }
+            }
+        }
+        return 0;
+
+    }
+
+    /**
+     * Calcula o log do numero total de documentos e guarda
+     */
+    public void calculaLog10NumeroTotalDeDocumentos() {
+        this.logDoTotalDeDocumentos = Math.log10(this.documentos.size());
+    }
+
+    /**
+     * Retorna o log do numero total de documentos
+     */
+    public double log10NumeroTotalDeDocumentos() {
+        return this.logDoTotalDeDocumentos;
+    }
+
     ///////////////////////////////////////////
     //// Funções para coletar estatísticas ////
     ///////////////////////////////////////////
     /**
-     * Imprime no console quantos % do array esta vazio.
+     * Retorna quantos % do array esta vazio.
      */
-    public void vazio() {
+    public double vazio() {
         int contador = 0;
-        for (int i = 0; i < TAMANHO; i++) {
+        for (int i = 0; i < TAMANHO_TABELA; i++) {
             if (array[i] == null) {
                 contador++;
             }
 
         }
         double c = contador;
-        double t = TAMANHO;
+        double t = TAMANHO_TABELA;
         double percent = (c / t) * 100;
 
-        System.out.println(">> " + percent + "% do array esta vazio.");
+        return percent;
 
     }
 
     /**
-     * Imprime no console o tamanho medio dos arrays de palavras
+     * Retorna o tamanho medio dos arrays de palavras
      */
-    public void tamanhoArrayPalavras() {
+    public double tamanhoMedioArrayPalavras() {
         double contador = 0;
         double media = 0;
-        for (int i = 0; i < TAMANHO; i++) {
+        for (int i = 0; i < TAMANHO_TABELA; i++) {
             if (array[i] != null) {
                 media = media + array[i].size();
                 contador++;
@@ -104,17 +179,17 @@ public class TabelaHash {
         }
 
         double total = media / contador;
+        return total;
 
-        System.out.println(">> Os arrays de palavras tem em media " + total + " palavra(s).");
     }
 
     /**
-     * Imprime no console o tamanho medio dos arrays de pares
+     * Retorna o tamanho medio da estrutura de tuplas(pares)
      */
-    public void tamanhoArrayPares() {
+    public double tamanhoArrayPares() {
         double contador = 0;
         double media = 0;
-        for (int i = 0; i < TAMANHO; i++) {
+        for (int i = 0; i < TAMANHO_TABELA; i++) {
             if (array[i] != null) {
                 for (InterfacePalavra p : array[i]) {
                     media = media + p.numeroDocumentos();
@@ -126,30 +201,7 @@ public class TabelaHash {
         }
 
         double total = (media / contador);
-
-        System.out.println(">> Os arrays de pares tem em media " + total + " par(es).");
-    }
-
-    /**
-     * Busca uma palavra no array
-     */
-    public InterfacePalavra buscarPalavra(String palavra) {
-
-        byte[] bb = Strings.BytePalavraNormalizada(palavra);
-
-        int valorHash = funcaoHashing.hash(bb, 0, bb.length, SEED);
-
-        int nn = (valorHash % TAMANHO);
-
-        if (array[nn] != null) {
-            for (InterfacePalavra p : array[nn]) {
-                if (palavra.equals(p.getTexto())) {
-                    return p;
-                }
-            }
-        }
-
-        return null;
+        return total;
     }
 
 }

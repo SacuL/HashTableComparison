@@ -40,7 +40,7 @@ public class PreProcessamento {
 
         FuncaoHashingFactory.Funcao tipoFuncao = FuncaoHashingFactory.Funcao.MURMURHASHING3;
 
-        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, SEED, tipoFuncao, PalavraFactory.TipoPalavra.MAP);
+        TabelaHash tbHash = new TabelaHash(TAMANHO_TABELA, LIMITE, SEED, tipoFuncao, PalavraFactory.TipoPalavra.MAP);
         InterfaceHashing funcaoHashing = FuncaoHashingFactory.criaHashing(tipoFuncao);
 
         int primeiroEspaco;
@@ -131,7 +131,7 @@ public class PreProcessamento {
                 "Numero de espaços totais: " + (TAMANHO_TABELA));
 
         tbHash.vazio();
-        tbHash.tamanhoArrayPalavras();
+        tbHash.tamanhoMedioArrayPalavras();
         tbHash.tamanhoArrayPares();
 
 //        Palavra p = tbHash.buscarPalavra("house");

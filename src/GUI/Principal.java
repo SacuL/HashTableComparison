@@ -1,11 +1,11 @@
 package GUI;
 
 import Estruturas.PalavraFactory;
+import Estruturas.TabelaHash;
 import FuncoesHash.FuncaoHashingFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker.StateValue;
 
@@ -15,7 +15,9 @@ import javax.swing.SwingWorker.StateValue;
  */
 public class Principal extends javax.swing.JFrame {
 
-    private PreProcessamento worker;
+    private TabelaHash tbHash;
+    private PreProcessamento preWorker;
+    private BuscarPalavra buscarWorker;
 
     /**
      * Creates new form Principal
@@ -25,15 +27,18 @@ public class Principal extends javax.swing.JFrame {
         initComboTuplas();
         initComboHashing();
 
+        // Centraliza a janela
+        this.setLocationRelativeTo(null);
+
     }
 
     private void initComboTuplas() {
-        this.tipoPalavra = new JComboBox(PalavraFactory.TipoPalavra.values());
+        this.tipoPalavra.setModel(new javax.swing.DefaultComboBoxModel(PalavraFactory.TipoPalavra.values()));
         this.tipoPalavra.setSelectedIndex(0);
     }
 
     private void initComboHashing() {
-        this.funcaoHashing = new JComboBox(FuncaoHashingFactory.Funcao.values());
+        this.funcaoHashing.setModel(new javax.swing.DefaultComboBoxModel(FuncaoHashingFactory.Funcao.values()));
         this.funcaoHashing.setSelectedIndex(0);
     }
 
@@ -66,14 +71,18 @@ public class Principal extends javax.swing.JFrame {
         log = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        palavraBuscar = new javax.swing.JTextField();
+        textoBuscar = new javax.swing.JTextField();
         botaoBuscarPalavra = new javax.swing.JButton();
         barraProgresso = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Índice invertido de busca");
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Arquivo:");
+
+        textoCaminho.setText("C:\\Users\\Lucas\\Desktop\\short-abstracts_en.ttl");
 
         botaoAbrir.setText("Abrir");
         botaoAbrir.addActionListener(new java.awt.event.ActionListener() {
@@ -118,9 +127,9 @@ public class Principal extends javax.swing.JFrame {
 
         tamanhoTabela.setText("500000");
 
-        limiteDocumentos.setText("50000");
+        limiteDocumentos.setText("4305028");
 
-        botaoIniciar.setText("Iniciar");
+        botaoIniciar.setText("Iniciar Leitura");
         botaoIniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoIniciarActionPerformed(evt);
@@ -134,26 +143,26 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
-                        .addComponent(tamanhoTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(limiteDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                             .addComponent(tipoPalavra, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(funcaoHashing, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(funcaoHashing, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(limiteDocumentos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(botaoIniciar))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botaoIniciar)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addComponent(tamanhoTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -176,11 +185,11 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(funcaoHashing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 189, Short.MAX_VALUE)
-                .addComponent(botaoIniciar)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addComponent(botaoIniciar))
         );
 
+        log.setEditable(false);
         log.setColumns(20);
         log.setRows(5);
         jScrollPane1.setViewportView(log);
@@ -202,6 +211,11 @@ public class Principal extends javax.swing.JFrame {
         jLabel7.setText("Buscar palavra:");
 
         botaoBuscarPalavra.setText("Buscar");
+        botaoBuscarPalavra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoBuscarPalavraActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -214,7 +228,7 @@ public class Principal extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(palavraBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botaoBuscarPalavra, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -225,7 +239,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(palavraBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(botaoBuscarPalavra))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barraProgresso, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -277,6 +291,16 @@ public class Principal extends javax.swing.JFrame {
      */
     private void botaoIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIniciarActionPerformed
 
+        // Limpa a tabela hash atual
+        tbHash = null;
+
+        // Chama o Garbage Collector
+        System.gc();
+
+        // Desabilita os botões
+        botaoIniciar.setEnabled(false);
+        botaoAbrir.setEnabled(false);
+
         // Pega os campos de configuracao
         String caminho = textoCaminho.getText();
         int tamanho = Integer.parseInt(tamanhoTabela.getText());
@@ -284,24 +308,32 @@ public class Principal extends javax.swing.JFrame {
         FuncaoHashingFactory.Funcao funcao = (FuncaoHashingFactory.Funcao) funcaoHashing.getSelectedItem();
         PalavraFactory.TipoPalavra palavra = (PalavraFactory.TipoPalavra) tipoPalavra.getSelectedItem();
 
-        worker = new PreProcessamento(caminho, tamanho, limite, palavra, funcao, log);
+        // Cria worker thread
+        preWorker = new PreProcessamento(caminho, tamanho, limite, palavra, funcao, log, this);
 
-        worker.addPropertyChangeListener(new PropertyChangeListener() {
+        // Cria um Listener para receber os eventos enviados pelo worker thread
+        preWorker.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
                 switch (event.getPropertyName()) {
                     case "progress":
+                        // Atualiza a barra de progresso
                         barraProgresso.setIndeterminate(false);
                         barraProgresso.setValue((Integer) event.getNewValue());
                         break;
                     case "state":
                         switch ((StateValue) event.getNewValue()) {
                             case DONE:
-                                barraProgresso.setVisible(false);
+                                // Finaliza
+                                barraProgresso.setIndeterminate(false);
+                                barraProgresso.setValue(0);
+                                botaoIniciar.setEnabled(true);
+                                botaoAbrir.setEnabled(true);
+                                preWorker = null;
                                 break;
                             case STARTED:
                             case PENDING:
-                                barraProgresso.setVisible(true);
+                                // Em processo de inicialização
                                 barraProgresso.setIndeterminate(true);
                                 break;
                         }
@@ -310,10 +342,69 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        worker.execute();
+        // Inicia o worker thread
+        preWorker.execute();
 
 
     }//GEN-LAST:event_botaoIniciarActionPerformed
+
+    /**
+     * Inicia a busca por uma palavra na tabela.
+     */
+    private void botaoBuscarPalavraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraActionPerformed
+        if (tbHash == null || textoBuscar.getText() == null || textoBuscar.getText().isEmpty()) {
+            return;
+        }
+        // Desabilita os botões
+        botaoIniciar.setEnabled(false);
+        botaoBuscarPalavra.setEnabled(false);
+
+        log.append("\nIniciando busca usando os termos: " + textoBuscar.getText() + "\n");
+
+        // Cria worker thread
+        buscarWorker = new BuscarPalavra(log, textoBuscar.getText().split(" "), tbHash);
+
+        // Cria um Listener para receber os eventos enviados pelo worker thread
+        buscarWorker.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                switch (event.getPropertyName()) {
+                    case "progress":
+                        // Atualiza a barra de progresso
+                        barraProgresso.setIndeterminate(false);
+                        barraProgresso.setValue((Integer) event.getNewValue());
+                        break;
+                    case "state":
+                        switch ((StateValue) event.getNewValue()) {
+                            case DONE:
+                                // Finaliza
+                                barraProgresso.setIndeterminate(false);
+                                barraProgresso.setValue(0);
+                                botaoIniciar.setEnabled(true);
+                                botaoBuscarPalavra.setEnabled(true);
+                                buscarWorker = null;
+                                break;
+                            case STARTED:
+                            case PENDING:
+                                // Em processo de inicialização
+                                barraProgresso.setIndeterminate(true);
+                                break;
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Inicia o worker thread
+        buscarWorker.execute();
+    }//GEN-LAST:event_botaoBuscarPalavraActionPerformed
+
+    /**
+     * Recebe a tabela Hash criada pela worker thread
+     */
+    public void setTabelaHash(TabelaHash tb) {
+        this.tbHash = tb;
+    }
 
     /**
      * @param args the command line arguments
@@ -370,8 +461,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField limiteDocumentos;
     private javax.swing.JTextArea log;
-    private javax.swing.JTextField palavraBuscar;
     private javax.swing.JTextField tamanhoTabela;
+    private javax.swing.JTextField textoBuscar;
     private javax.swing.JTextField textoCaminho;
     private javax.swing.JComboBox tipoPalavra;
     // End of variables declaration//GEN-END:variables

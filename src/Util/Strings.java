@@ -4,17 +4,9 @@ import java.text.Normalizer;
 
 public class Strings {
 
-//    static Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-//
-//    public static String SemAcento(String str) {
-//        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
-//
-//        return pattern.matcher(nfdNormalizedString).replaceAll("");
-//    }
     public static String NormalizaTexto(String texto) {
 
         /// Remove acentos
-        // texto = SemAcento(texto); // Muito ruim
         // texto = StringUtils.stripAccents(texto); // Muito ruim
         texto = Normalizer.normalize(texto, Normalizer.Form.NFD);
         texto = texto.replaceAll("\\p{M}", "");

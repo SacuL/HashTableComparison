@@ -74,11 +74,21 @@ public class PalavraMap implements InterfacePalavra {
         System.out.println();
     }
 
+    /**
+     * Retorna o numero de documentos em que a palavra ocorre
+     */
     public int numeroDocumentos() {
         if (this.documentos != null) {
             return this.documentos.size();
         }
         return 0;
+    }
+
+    /**
+     * Retorna o numero de ocorrencias da palavra no documento
+     */
+    public int numeroOcorrenciasPalavraNoDocumento(int id_documento) {
+        return this.documentos.get(id_documento);
     }
 
 }

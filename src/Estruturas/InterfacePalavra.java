@@ -13,4 +13,6 @@ public interface InterfacePalavra {
     public void imprimePares();
 
     public int numeroDocumentos();
+
+    public int numeroOcorrenciasPalavraNoDocumento(int id_documento);
 }
