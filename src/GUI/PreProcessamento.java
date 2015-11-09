@@ -26,12 +26,12 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
 
     private final String caminhoArquivo;
     private final int tamanhoTabela;
+    private final int tamanhoTabelaMenos1;
     private final int limite;
     private final PalavraFactory.TipoPalavra tipoPalavra;
     private final FuncaoHashingFactory.Funcao tipoFuncaoHashing;
     private final InterfaceHashing funcaoHashing;
     private final JTextArea log;
-    private final int SEED;
     private Principal pai;
     private long startTime;
     private long endTime;
@@ -41,7 +41,15 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
      */
     public PreProcessamento(String caminhoArquivo, int tamanhoTabela, int limite, PalavraFactory.TipoPalavra tipoPalavra, FuncaoHashingFactory.Funcao tipoFuncaoHashing, JTextArea log, Principal pai) {
         this.caminhoArquivo = caminhoArquivo;
-        this.tamanhoTabela = tamanhoTabela;
+
+        // Find a power of 2 >= tamanhoTabela
+        int capacity = 1;
+        while (capacity < tamanhoTabela) {
+            capacity <<= 1;
+        }
+
+        this.tamanhoTabela = capacity;
+        this.tamanhoTabelaMenos1 = capacity - 1;
 
         if (limite < 0) {
             this.limite = -1;
@@ -53,7 +61,6 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         this.tipoFuncaoHashing = tipoFuncaoHashing;
         this.funcaoHashing = FuncaoHashingFactory.criaHashing(tipoFuncaoHashing);
         this.log = log;
-        this.SEED = 13;
         this.pai = pai;
         this.endTime = -1;
     }
@@ -91,7 +98,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
             String linha;
             while ((linha = in.readLine()) != null && (contaLinhas <= limite || limite == -1)) {
 
-                if (limite != -1 && (contaLinhas % (limite / 100) == 0)) {
+                if (limite != -1 && (contaLinhas % (((double) ((double) limite) / 100)) == 0)) {
                     porcentagem++;
                     setProgress(porcentagem);
                 }
@@ -134,17 +141,20 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
                         // Insere no hashset para contar palavras únicas
                         palavrasUnicas.add(s);
 
-                        // Aplica normalização
-                        byte[] bb = Strings.BytePalavraNormalizada(s);
-
                         // Calcula a posicao usando uma função de hashing
-                        int valorHash = funcaoHashing.hash(bb, 0, bb.length, SEED);
+//                        int valorHash = funcaoHashing.hash(s);
+                        long valorHash = funcaoHashing.hashLong(s);
 
                         // Limita o valor pelo tamanho da tabela
-                        int valorComMod = (valorHash % tamanhoTabela);
+//                        int valorComMod = (valorHash % tamanhoTabela);
+//                        long valorComMod = (valorHash % tamanhoTabela);
+//                        // Casting seguro pois tamanho tabela < limite int32
+//                        int valorIntComMod = (int) valorComMod;
+                        // Otimização: substitui o mod
+                        int valorIntComMod = (int) (valorHash & tamanhoTabelaMenos1);
 
-                        // Insere no hashing
-                        if (tbHash.insere(s, contaLinhas - 1, valorComMod)) {
+//                         Insere no hashing
+                        if (tbHash.insere(s, contaLinhas - 1, valorIntComMod)) {
                             colisoes++;
                         }
 
@@ -191,6 +201,10 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         } else {
             publish(" >> Distribuição Média das Colisões: não houve colisão!");
         }
+
+        publish(tbHash.vazio() + "% do array está vazio.");
+        publish("Tamanho medio das tuplas: " + tbHash.tamanhoMedioArrayPares());
+        publish("Tamanho medio da estrutura de palavras " + tbHash.tamanhoMedioArrayPalavras());
 
         endTime = System.currentTimeMillis();
         return tbHash;

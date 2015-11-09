@@ -8,6 +8,7 @@ package Estruturas;
  *
  * @author Lucas
  */
+@Deprecated
 public class Par {
 
     public int contador;

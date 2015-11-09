@@ -6,15 +6,7 @@ import FuncoesHash.FuncaoHashingFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.SwingWorker.StateValue;
 
 /**
@@ -86,7 +78,6 @@ public class Principal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Índice invertido de busca");
-        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Arquivo:");
@@ -134,7 +125,7 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel6.setText("Função de hashing");
 
-        tamanhoTabela.setText("500000");
+        tamanhoTabela.setText("500009");
 
         limiteDocumentos.setText("4305028");
 
@@ -203,7 +194,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(funcaoHashing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botaoIniciar)
                     .addComponent(jButton1)))
@@ -219,7 +210,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 861, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -248,9 +239,9 @@ public class Principal extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textoBuscar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoBuscarPalavra, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
+                        .addComponent(botaoBuscarPalavra)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -282,7 +273,7 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -421,63 +412,10 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (this.tbHash == null) {
-            
-            
-        }
-        
-        
 
-//        JFrame frame = new JFrame("Índice invertido de busca");
-//        final JFXPanel fxPanel = new JFXPanel();
-//        frame.add(fxPanel);
-//        frame.setSize(700, 500);
-//        frame.setLocationRelativeTo(null);
-//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        frame.setVisible(true);
-//
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                initFX(fxPanel);
-//            }
-//        });
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void initFX(JFXPanel fxPanel) {
-        // This method is invoked on JavaFX thread
-        Scene scene = createScene();
-        fxPanel.setScene(scene);
-    }
-
-    private Scene createScene() {
-
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        final BarChart<String, Number> bc
-                = new BarChart<String, Number>(xAxis, yAxis);
-        bc.setTitle("Distribuição de Colisões");
-        xAxis.setLabel("Posição");
-        yAxis.setLabel("Número de colisões");
-
-        XYChart.Series series1 = new XYChart.Series();
-
-        int tamTabela = (Integer.parseInt(tamanhoTabela.getText()));
-
-        for (int i = 0; i < tamTabela; i++) {
-
-            int tamanho = tbHash.getNumeroPalavras(i);
-
-            series1.getData().add(new XYChart.Data(String.valueOf(i), tamanho));
-
-        }
-
-        Scene scene = new Scene(bc, 1200, 800);
-        bc.setBarGap(0);
-        bc.getData().addAll(series1);
-
-        return scene;
-    }
 
     /**
      * Recebe a tabela Hash criada pela worker thread

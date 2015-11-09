@@ -15,6 +15,7 @@ public class TabelaHash {
 
     private final int SEED;
     private final int TAMANHO_TABELA;
+    private final int TAMANHO_TABELA_MENOS_1;
     private final InterfaceHashing funcaoHashing;
     private final PalavraFactory.TipoPalavra tipoPalavra;
     private int PALAVRAS;
@@ -30,6 +31,7 @@ public class TabelaHash {
         this.tipoPalavra = tipoPalavra;
         this.funcaoHashing = FuncaoHashingFactory.criaHashing(funcaoHashing);
         this.TAMANHO_TABELA = tam;
+        this.TAMANHO_TABELA_MENOS_1 = tam - 1;
         this.SEED = seed;
         this.PALAVRAS = 0;
         this.array = (ArrayList<InterfacePalavra>[]) new ArrayList[tam];
@@ -84,17 +86,15 @@ public class TabelaHash {
         // Normaliza: remove acentos, pontuação e caixa alta
         String texto = Strings.NormalizaTexto(palavra);
 
-        // Aplica normalização
-        byte[] bb = Strings.BytePalavraNormalizada(texto);
-
         // Calcula a posicao usando uma função de hashing
-        int valorHash = funcaoHashing.hash(bb, 0, bb.length, 13);
+        long valorHashLong = funcaoHashing.hashLong(texto);
 
+//        long valorHashLongMod = (valorHashLong % TAMANHO_TABELA);
         // Limita o valor pelo tamanho da tabela
-        int valorComMod = (valorHash % TAMANHO_TABELA);
+        int valorComModint = (int) (valorHashLong & TAMANHO_TABELA_MENOS_1);
 
-        if (array[valorComMod] != null) {
-            for (InterfacePalavra p : array[valorComMod]) {
+        if (array[valorComModint] != null) {
+            for (InterfacePalavra p : array[valorComModint]) {
                 if (texto.equals(p.getTexto())) {
                     return p;
                 }
@@ -211,40 +211,40 @@ public class TabelaHash {
      * Retorna o tamanho medio dos arrays de palavras
      */
     public double tamanhoMedioArrayPalavras() {
-        double contador = 0;
-        double media = 0;
+        double posicoes = 0;
+        double somatorio = 0;
         for (int i = 0; i < TAMANHO_TABELA; i++) {
             if (array[i] != null) {
-                media = media + array[i].size();
-                contador++;
+                somatorio = somatorio + array[i].size();
+                posicoes++;
             }
 
         }
 
-        double total = media / contador;
-        return total;
+        double media = somatorio / posicoes;
+        return media;
 
     }
 
     /**
      * Retorna o tamanho medio da estrutura de tuplas(pares)
      */
-    public double tamanhoArrayPares() {
-        double contador = 0;
-        double media = 0;
+    public double tamanhoMedioArrayPares() {
+        double posicoes = 0;
+        double somatorio = 0;
         for (int i = 0; i < TAMANHO_TABELA; i++) {
             if (array[i] != null) {
                 for (InterfacePalavra p : array[i]) {
-                    media = media + p.numeroDocumentos();
-                    contador++;
+                    somatorio = somatorio + p.numeroDocumentos();
+                    posicoes++;
                 }
 
             }
 
         }
 
-        double total = (media / contador);
-        return total;
+        double media = (somatorio / posicoes);
+        return media;
     }
 
 }

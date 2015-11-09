@@ -35,4 +35,10 @@ public interface InterfacePalavra {
      * Retorna um iterator para percorrer a estrutura
      */
     public Iterator getIterator();
+
+//    @Override
+//    public int hashCode();
+//
+//    @Override
+//    public boolean equals(Object o);
 }

@@ -38,4 +38,21 @@ public class Strings {
 
     }
 
+    /**
+     * Retorna a palavra normalizada (completando espaços ou reduzindo o tamanho
+     * até 20 caracteres)
+     */
+    public static String PalavraNormalizada(String palavra) {
+
+        if (palavra.length() > 20) {
+            palavra = palavra.substring(0, 20);
+        }
+        while (palavra.length() < 20) {
+            palavra = palavra + ' ';
+        }
+
+        return palavra;
+
+    }
+
 }
