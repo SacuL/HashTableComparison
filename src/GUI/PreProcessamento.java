@@ -176,7 +176,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         }
 
         if (tbHash.getNumeroDePalavrasUnicas() == 0) {
-            // Nada foi inserido
+            publish("Nada foi inserido!");
             return null;
         }
 
