@@ -39,7 +39,7 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
 
         long inicio = System.nanoTime();
 
-        double logN = tbHash.log10NumeroTotalDeDocumentos();
+        double logN = tbHash.log2NumeroTotalDeDocumentos();
 
         // Cria um hashmap para guardar: id_documento : relevância
         HashMap<Integer, Double> docs = new HashMap<>();

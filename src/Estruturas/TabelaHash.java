@@ -138,14 +138,15 @@ public class TabelaHash {
     /**
      * Calcula o log do numero total de documentos e guarda
      */
-    public void calculaLog10NumeroTotalDeDocumentos() {
-        this.logDoTotalDeDocumentos = Math.log10(this.documentos.size());
+    public void calculaLog2NumeroTotalDeDocumentos() {
+
+        this.logDoTotalDeDocumentos = Math.log(this.documentos.size()) / Math.log(2);
     }
 
     /**
      * Retorna o log do numero total de documentos
      */
-    public double log10NumeroTotalDeDocumentos() {
+    public double log2NumeroTotalDeDocumentos() {
         return this.logDoTotalDeDocumentos;
     }
 

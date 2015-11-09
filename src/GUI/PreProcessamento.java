@@ -180,7 +180,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
             return null;
         }
 
-        tbHash.calculaLog10NumeroTotalDeDocumentos();
+        tbHash.calculaLog2NumeroTotalDeDocumentos();
 
         publish("Numero de linhas arquivo: " + contaLinhas);
         publish("Numero de colisoes: " + colisoes);
