@@ -9,4 +9,6 @@ public interface InterfaceHashing {
 //    public int hash(String texto);
 
     public long hashLong(String texto);
+    
+//    public int hash(String texto);
 }

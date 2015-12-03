@@ -8,14 +8,14 @@ public class FuncaoHashingFactory {
 
     public enum Funcao {
 
-        MURMURHASHING3, JAVA_STRING_HASH, CITYHASH, SUPERFASTHASH, CRC32
+        FNV, MURMURHASHING3, JAVA_STRING_HASH, CITYHASH, SUPERFASTHASH, CRC32
     }
 
     public static InterfaceHashing criaHashing(Funcao funcao) {
 
         switch (funcao) {
             case MURMURHASHING3:
-                return new MurmurHash();
+                return new MurmurHash3A();
             case JAVA_STRING_HASH:
                 return new JavaStringHash();
             case CITYHASH:
@@ -24,10 +24,12 @@ public class FuncaoHashingFactory {
                 return new SuperFastHash();
             case CRC32:
                 return new CRC32Hash();
+            case FNV:
+                return new FNV();
+            default:
+                return new FNV();
 
         }
-
-        return null;
 
     }
 }

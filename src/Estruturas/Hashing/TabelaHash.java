@@ -1,4 +1,7 @@
-package Estruturas;
+package Estruturas.Hashing;
+
+
+
 
 import FuncoesHash.InterfaceHashing;
 
@@ -68,7 +71,7 @@ public class TabelaHash {
 
         // Se a palavra não foi encontrada cria uma nova palavra
         // Colisão!
-        array[posicao].add(new PalavraList(palavra, id_documento));
+        array[posicao].add(PalavraFactory.criaPalavra(palavra, id_documento, tipoPalavra));
         this.PALAVRAS++;
         return true;
 
@@ -115,18 +118,18 @@ public class TabelaHash {
     /**
      * Retorna o numero de ocorrencias de uma palavra em um documento
      */
-    public int ocorrenciasPalavraNoDocumento(String palavra, int posicaoPalavra, int id_documento) {
-
-        if (array[posicaoPalavra] != null) {
-            for (InterfacePalavra p : array[posicaoPalavra]) {
-                if (p.getTexto().equals(palavra)) {
-                    return p.numeroOcorrenciasPalavraNoDocumento(id_documento);
-                }
-            }
-        }
-        return 0;
-
-    }
+//    public int ocorrenciasPalavraNoDocumento(String palavra, int posicaoPalavra, int id_documento) {
+//
+//        if (array[posicaoPalavra] != null) {
+//            for (InterfacePalavra p : array[posicaoPalavra]) {
+//                if (p.getTexto().equals(palavra)) {
+//                    return p.numeroOcorrenciasPalavraNoDocumento(id_documento);
+//                }
+//            }
+//        }
+//        return 0;
+//
+//    }
 
     /**
      * Retorna o número de termos distintos do documento

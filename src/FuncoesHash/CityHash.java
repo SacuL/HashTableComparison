@@ -338,12 +338,6 @@ public class CityHash implements InterfaceHashing {
         ///////////////////////////
         int pos = 0;
 
-        if (s.length() < 20) {
-            s = String.format("%1$-" + 20 + "s", s);
-        } else {
-            s = s.substring(0, 20);
-        }
-
         byte[] b = s.getBytes();
         int len = b.length;
         ///////////////////////////
@@ -396,5 +390,4 @@ public class CityHash implements InterfaceHashing {
 
     }
 
-   
 }

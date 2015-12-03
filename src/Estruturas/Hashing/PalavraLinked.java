@@ -1,4 +1,4 @@
-package Estruturas;
+package Estruturas.Hashing;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Lucas
  */
-public class PalavraMap implements InterfacePalavra {
+public class PalavraLinked implements InterfacePalavra {
 
     private String texto;
     private final HashMap<Integer, Integer> documentos;
@@ -21,7 +21,7 @@ public class PalavraMap implements InterfacePalavra {
     /**
      * Construtor: cria um novo HashMap insere uma nova key.
      */
-    public PalavraMap(String texto, int id_documento) {
+    public PalavraLinked(String texto, int id_documento) {
         this.texto = texto;
         this.documentos = new HashMap<>();
         this.documentos.put(id_documento, 1);
@@ -33,11 +33,19 @@ public class PalavraMap implements InterfacePalavra {
      */
     public void insere(int id_documento) {
 
-        if (this.documentos.containsKey(id_documento)) {
-            this.documentos.put(id_documento, documentos.get(id_documento) + 1);
-        } else {
+        Integer v = this.documentos.get(id_documento);
+
+        if (v == null) {
             this.documentos.put(id_documento, 1);
+        } else {
+            this.documentos.put(id_documento, v + 1);
         }
+
+//        if (this.documentos.containsKey(id_documento)) {
+//            this.documentos.put(id_documento, documentos.get(id_documento) + 1);
+//        } else {
+//            this.documentos.put(id_documento, 1);
+//        }
     }
 
     /*
@@ -63,7 +71,7 @@ public class PalavraMap implements InterfacePalavra {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PalavraMap other = (PalavraMap) obj;
+        final PalavraLinked other = (PalavraLinked) obj;
         return Objects.equals(this.texto, other.texto);
     }
 

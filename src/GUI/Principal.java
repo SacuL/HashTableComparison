@@ -1,7 +1,7 @@
 package GUI;
 
-import Estruturas.PalavraFactory;
-import Estruturas.TabelaHash;
+import Estruturas.Hashing.PalavraFactory;
+import Estruturas.Hashing.TabelaHash;
 import FuncoesHash.FuncaoHashingFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,6 +23,7 @@ public class Principal extends javax.swing.JFrame {
      * Creates new form Principal
      */
     public Principal() {
+        printSystemStatus();
         initComponents();
         initComboTuplas();
         initComboHashing();
@@ -30,6 +31,13 @@ public class Principal extends javax.swing.JFrame {
         // Centraliza a janela
         this.setLocationRelativeTo(null);
 
+    }
+
+    private void printSystemStatus() {
+        for (Object o : java.lang.System.getProperties().values()) {
+            System.out.println(o);
+        }
+        System.out.println(">> " + System.getProperty("sun.arch.data.model"));
     }
 
     private void initComboTuplas() {
@@ -308,6 +316,7 @@ public class Principal extends javax.swing.JFrame {
         PalavraFactory.TipoPalavra palavra = (PalavraFactory.TipoPalavra) tipoPalavra.getSelectedItem();
 
         // Cria worker thread
+//        preWorker = new PreProcessamentoTrie(caminho, limite, log, this);
         preWorker = new PreProcessamento(caminho, tamanho, limite, palavra, funcao, log, this);
 
         // Cria um Listener para receber os eventos enviados pelo worker thread

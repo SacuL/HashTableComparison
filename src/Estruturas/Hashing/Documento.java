@@ -1,4 +1,4 @@
-package Estruturas;
+package Estruturas.Hashing;
 
 /**
  *

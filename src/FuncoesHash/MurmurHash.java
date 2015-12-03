@@ -43,12 +43,6 @@ public class MurmurHash implements InterfaceHashing {
         int seed = 13;
         int offset = 0;
 
-        if (s.length() < 20) {
-            s = String.format("%1$-" + 20 + "s", s);
-        } else {
-            s = s.substring(0, 20);
-        }
-
         CharSequence data = s;
         int len = data.length();
         ///////////////////////////

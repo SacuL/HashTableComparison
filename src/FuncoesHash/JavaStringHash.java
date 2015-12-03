@@ -31,18 +31,6 @@ public class JavaStringHash implements InterfaceHashing {
     @Override
     public long hashLong(String s) {
 
-        ///////////////////////////
-        ////   Modificações    ////
-        ///////////////////////////
-        if (s.length() < 20) {
-            s = String.format("%1$-" + 20 + "s", s);
-        } else {
-            s = s.substring(0, 20);
-        }
-        ///////////////////////////
-        ///  Fim Modificações  ////
-        ///////////////////////////
-
         return (long) s.hashCode() & 0xffffffffL;
     }
 

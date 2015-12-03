@@ -7,16 +7,11 @@ public class SuperFastHash implements InterfaceHashing {
         ///////////////////////////
         ////   Modificações    ////
         ///////////////////////////
-        final String key;
-        if (s.length() < 20) {
-            key = String.format("%1$-" + 20 + "s", s);
-        } else {
-            key = s.substring(0, 20);
-        }
+        final String key = s;
+
         ///////////////////////////
         ///  Fim Modificações  ////
         ///////////////////////////
-
         int length = key.length();
         int hash = length, tmp, rem;
 

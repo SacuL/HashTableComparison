@@ -1,4 +1,4 @@
-package Estruturas;
+package Estruturas.Hashing;
 
 /**
  * Estrutura que representa uma tupla id_documento - contador. id_documento é o

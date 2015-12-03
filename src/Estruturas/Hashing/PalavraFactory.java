@@ -1,4 +1,4 @@
-package Estruturas;
+package Estruturas.Hashing;
 
 /**
  *
@@ -8,13 +8,13 @@ public class PalavraFactory {
 
     public enum TipoPalavra {
 
-        MAP, LIST_INCOMPLETO
+        MAP, LIST
     }
 
     public static InterfacePalavra criaPalavra(String texto, int id_documento, TipoPalavra tipoPalavra) {
 
         switch (tipoPalavra) {
-            case LIST_INCOMPLETO:
+            case LIST:
                 return new PalavraList(texto, id_documento);
 
             case MAP:

@@ -1,7 +1,7 @@
 package GUI;
 
-import Estruturas.InterfacePalavra;
-import Estruturas.TabelaHash;
+import Estruturas.Hashing.InterfacePalavra;
+import Estruturas.Hashing.TabelaHash;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
