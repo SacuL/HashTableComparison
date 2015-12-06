@@ -1,10 +1,9 @@
 package Estruturas.Hashing;
 
-
-
-
+import Estruturas.PalavraFactory;
+import Estruturas.Documento;
+import Estruturas.InterfacePalavra;
 import FuncoesHash.InterfaceHashing;
-
 import Util.Strings;
 import FuncoesHash.FuncaoHashingFactory;
 import java.util.ArrayList;

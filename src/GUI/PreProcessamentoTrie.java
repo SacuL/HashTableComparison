@@ -1,8 +1,9 @@
 package GUI;
 
-import Estruturas.Hashing.Documento;
+import Estruturas.Documento;
 import Estruturas.Hashing.TabelaHash;
-import Estruturas.Trie.Trie;
+import Estruturas.PalavrasBanidas;
+import Estruturas.Trie.ASCII_Trie;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import Util.Strings;
@@ -16,48 +17,49 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 /**
  *
  * @author Lucas
  */
-public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
+public class PreProcessamentoTrie extends SwingWorker<ASCII_Trie, String> {
 
     private final String caminhoArquivo;
-    private final int limite;
+    private final int numero_documentos;
     private final JTextArea log;
     private final Principal pai;
     private long startTime;
     private long endTime;
+    private final PalavrasBanidas palavras_banidas;
 
-    private final Trie trie;
+    private ASCII_Trie trie;
 
     /**
      * Construtor
      */
-    public PreProcessamentoTrie(String caminhoArquivo, int limite, JTextArea log, Principal pai) {
+    public PreProcessamentoTrie(String caminhoArquivo, int numero_documentos, JTextArea log, Principal pai, String lingua) {
         this.caminhoArquivo = caminhoArquivo;
         this.log = log;
         this.pai = pai;
         this.endTime = -1;
-        this.limite = limite;
-        // do ascii 48 ate ao 122 
-        this.trie = new Trie(32, 126);
+        this.numero_documentos = numero_documentos;
+        // Inicializa a trie com 58 possíveis caracteres da tabela ASCII
+        this.trie = new ASCII_Trie(58, numero_documentos);
         inicializaArrayAux();
+        this.palavras_banidas = new PalavrasBanidas(lingua);
     }
 
     /**
      * Método que realiza o Pre Processamento.
      */
     @Override
-    protected TabelaHash doInBackground() throws Exception {
+    protected ASCII_Trie doInBackground() throws Exception {
         startTime = System.currentTimeMillis();
 
         publish("\n\n--== INICIANDO ==--\nAbrindo arquivo " + caminhoArquivo);
 
-        FileInputStream stream = null;
+        FileInputStream stream;
         try {
             stream = new FileInputStream(caminhoArquivo);
 
@@ -67,23 +69,18 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
         }
         BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
-        // mudar de 10 para variavel!!
-        //        TabelaHash tbHash = new TabelaHash(10, limite, 13, tipoFuncaoHashing, tipoPalavra);
         int primeiroEspaco;
         int segundoEspaco;
         int numero_de_palavras = 0;
         int numero_de_palavras_puladas = 0;
         int contaLinhas = 0;
         int porcentagem = -1;
-        int colisoes = 0;
 
-        // Cria um HashSet para Contar os caracteres únicos
-        HashSet<Character> caracs = new HashSet<>();
         try {
             String linha;
-            while ((linha = in.readLine()) != null && (contaLinhas <= limite || limite == -1)) {
+            while ((linha = in.readLine()) != null && (contaLinhas <= numero_documentos || numero_documentos == -1)) {
 
-                if (limite != -1 && (contaLinhas % (((double) ((double) limite) / 100)) == 0)) {
+                if (numero_documentos != -1 && (contaLinhas % (((double) ((double) numero_documentos) / 100)) == 0)) {
                     porcentagem++;
                     setProgress(porcentagem);
                 }
@@ -100,6 +97,7 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
 
                     // Cria um objeto Documento
                     Documento doc = new Documento(nome);
+                    int id_documento = contaLinhas - 1;
 
                     // Seleciona a parte do texto entre as aspas
                     String texto = linha.substring(primeiroEspaco + segundoEspaco + 3, linha.length() - 6);
@@ -113,45 +111,41 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
                     numero_de_palavras = numero_de_palavras + palavras.length;
 
                     // Cria um HashSet para identificar as palavras unicas do documento
-//                    HashSet<String> palavrasUnicas = new HashSet<>();
+                    HashSet<String> palavrasUnicas = new HashSet<>();
+
                     for (String string : palavras) {
                         String s = string;
 
-                        if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty() || !isPureAscii(s)) {
+                        // Pula palavra:
+                        // - Se for vazia ou contes apenas com espaços
+                        // - Que não pode ser representada usando apenas caracteres ASCII
+                        // - Se for uma das 90 palavras mais comuns
+                        if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty() || !isPureAscii(s) || this.palavras_banidas.contains(s)) {
                             numero_de_palavras_puladas++;
                             continue;
                         }
 
+                        // Ajusta para o tamanho de 20 caracteres (completando espaços caso necessário)
                         if (s.length() < 20) {
                             s = s + arrayAux[s.length()];
                         } else {
                             s = s.substring(0, 20);
                         }
 
-                        trie.insere(s);
+                        // Insere no hashset para contar palavras únicas
+                        palavrasUnicas.add(s);
+
+                        // Insere na trie
+                        trie.insere(s, id_documento);
 
 //                        Scanner keyboard = new Scanner(System.in);
 //                        keyboard.nextInt();
-                        // Calcula a posicao usando uma função de hashing
-//                        int valorHash = funcaoHashing.hash(s);
-//                        long valorHash = funcaoHashing.hashLong(s);
-                        // Limita o valor pelo tamanho da tabela
-//                        int valorComMod = (valorHash % tamanhoTabela);
-//                        long valorComMod = (valorHash % tamanhoTabela);
-//                        // Casting seguro pois tamanho tabela < limite int32
-//                        int valorIntComMod = (int) valorComMod;
-                        // Otimização: substitui o mod
-//                        int valorIntComMod = (int) (valorHash & tamanhoTabelaMenos1);
-//                         Insere no hashing
-//                        if (tbHash.insere(s, contaLinhas - 1, valorIntComMod)) {
-//                            colisoes++;
-//                        }
                     }
 
                     // Conta palavras únicas
-//                    doc.setNumeroDeTermosDistintos(palavrasUnicas.size());
+                    doc.setNumeroDeTermosDistintos(palavrasUnicas.size());
                     // Insere o objeto Documento
-                    // tbHash.insereDocumento(doc, contaLinhas - 1);
+                    trie.insereDocumento(doc, id_documento);
                 }
                 contaLinhas++;
 
@@ -161,47 +155,29 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
             return null;
         }
 
-//        for (Character ch : caracs) {
-//            publish(ch.toString());
-//        }
         trie.imprimeChaves();
+        trie.calculaLog10NumeroDocumentos();
 
-//        if (tbHash.getNumeroDePalavrasUnicas() == 0) {
-//            publish("Nada foi inserido!");
-//            return null;
-//        }
-//
-//        tbHash.calculaLog2NumeroTotalDeDocumentos();
-//
-//        publish("Numero de linhas arquivo: " + contaLinhas);
-//        publish("Numero de colisoes: " + colisoes);
-//        publish("Numero de palavras unicas: " + tbHash.getNumeroDePalavrasUnicas());
-//        publish("Porcentual de colisões: " + (100 * colisoes / tbHash.getNumeroDePalavrasUnicas()));
-//        publish("Numero total de palavras: " + numero_de_palavras);
-//        publish("Numero de palavras puladas: " + numero_de_palavras_puladas);
-//        publish("Numero de palavras inserid: " + (numero_de_palavras - numero_de_palavras_puladas));
-//        publish("Numero de espaços totais: " + (tamanhoTabela));
-//
-//        double qtd = ((double) colisoes / (double) tamanhoTabela);
-//        publish(" >> Quantidade Média de Colisões Totais: " + qtd);
-//
-//        double posComCol = tbHash.posicoesComColisao();
-//        if (posComCol != 0) {
-//            double distMed = ((double) colisoes / tbHash.posicoesComColisao());
-//            publish(" >> Distribuição Média das Colisões: " + distMed);
-//        } else {
-//            publish(" >> Distribuição Média das Colisões: não houve colisão!");
-//        }
-//
-//        publish(tbHash.vazio() + "% do array está vazio.");
-//        publish("Tamanho medio das tuplas: " + tbHash.tamanhoMedioArrayPares());
-//        publish("Tamanho medio da estrutura de palavras " + tbHash.tamanhoMedioArrayPalavras());
+        publish("Numero de linhas arquivo: " + contaLinhas);
+        publish("Numero total de palavras: " + numero_de_palavras);
+        double total = (double) numero_de_palavras;
+        double puladas = (double) numero_de_palavras_puladas;
+        double inseridas = total - puladas;
+        double pPalavrasPuladas = 100 * puladas / total;
+        double pPalavrasInseridas = 100 * inseridas / total;
+        publish("Numero de palavras   puladas: " + numero_de_palavras_puladas + " (" + pPalavrasPuladas + "%)");
+        publish("Numero de palavras inseridas: " + (numero_de_palavras - numero_de_palavras_puladas) + " (" + pPalavrasInseridas + "%)");
+
         endTime = System.currentTimeMillis();
-        return null;
+        return trie;
     }
 
     static CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder(); // or "ISO-8859-1" for ISO Latin 1
 
+    /**
+     * Método que verifica se uma string pode ser representada usando apenas
+     * caracteres ASCII
+     */
     public static boolean isPureAscii(String v) {
         return asciiEncoder.canEncode(v);
     }
@@ -217,8 +193,8 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
     }
 
     /**
-     * Método chamado ao final do processamento do método doInBackground. Envia
-     * a tabela hash para o JFrame Principal.
+     * Método chamado ao final do processamento do método doInBackground.
+     * Calcula o tempo de execução e envia a trie para o JFrame Principal.
      */
     @Override
     protected void done() {
@@ -238,14 +214,21 @@ public class PreProcessamentoTrie extends SwingWorker<TabelaHash, String> {
         }
 
         try {
-            pai.setTabelaHash(get());
+            pai.setTrie(get());
         } catch (InterruptedException | ExecutionException ex) {
             publish("Um erro ocorreu:\n" + ex.getMessage());
+        } finally {
+            pai.setEnabled(true);
         }
     }
 
-    private String[] arrayAux = new String[20];
+    // Array auxiliar para otimizar o processo concatenação de 
+    // espaços em palavras com tamanho menor que 20
+    private final String[] arrayAux = new String[20];
 
+    /**
+     * Inicializa o array auxiliar de concatenação de espaços
+     */
     private void inicializaArrayAux() {
 
         arrayAux[1] = "                   ";

@@ -1,28 +1,21 @@
-package Estruturas.Hashing;
+package Estruturas.Trie;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 /**
- * Estrutura que representa uma palavra e suas ocorrências em vários documentos.
- * Possui um String texto que representa a palavra em sí e um HashMap onde a
- * chave é o id do documento e o valor um contador de ocorrências da palavra em
- * um documento.
  *
  * @author Lucas
  */
-public class PalavraLinked implements InterfacePalavra {
+public class PalavraMapTrie {
 
-    private String texto;
     private final HashMap<Integer, Integer> documentos;
 
     /**
      * Construtor: cria um novo HashMap insere uma nova key.
      */
-    public PalavraLinked(String texto, int id_documento) {
-        this.texto = texto;
+    public PalavraMapTrie(int id_documento) {
         this.documentos = new HashMap<>();
         this.documentos.put(id_documento, 1);
     }
@@ -40,19 +33,6 @@ public class PalavraLinked implements InterfacePalavra {
         } else {
             this.documentos.put(id_documento, v + 1);
         }
-
-//        if (this.documentos.containsKey(id_documento)) {
-//            this.documentos.put(id_documento, documentos.get(id_documento) + 1);
-//        } else {
-//            this.documentos.put(id_documento, 1);
-//        }
-    }
-
-    /*
-     * Retorna a palavra em sí;
-     */
-    public String getTexto() {
-        return texto;
     }
 
     public HashMap<Integer, Integer> getDocumentos() {
@@ -60,26 +40,10 @@ public class PalavraLinked implements InterfacePalavra {
     }
 
     /**
-     * Compara se dois objetos Palavra são iguais. A condição é a string palavra
-     * que ambos contém ser a mesma, independente do HashMap.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PalavraLinked other = (PalavraLinked) obj;
-        return Objects.equals(this.texto, other.texto);
-    }
-
-    /**
-     * Imprime todos os documentos do HashMap.
+     * Imprime todos as ocorrencias da palavra.
      */
     public void imprimePares() {
-        System.out.println("A palavra " + this.texto + " foi encontrada nos seguintes documentos:");
+        System.out.println("A palavra oif encontrada nos seguintes documentos:");
         for (Map.Entry<Integer, Integer> i : this.documentos.entrySet()) {
             System.out.print(i.getKey() + " - ");
         }
@@ -112,13 +76,6 @@ public class PalavraLinked implements InterfacePalavra {
         }
 
         return this.documentos.entrySet().iterator();
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.texto);
-        return hash;
     }
 
 }

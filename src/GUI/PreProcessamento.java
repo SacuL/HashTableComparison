@@ -1,8 +1,9 @@
 package GUI;
 
-import Estruturas.Hashing.Documento;
-import Estruturas.Hashing.PalavraFactory;
+import Estruturas.Documento;
+import Estruturas.PalavraFactory;
 import Estruturas.Hashing.TabelaHash;
+import Estruturas.PalavrasBanidas;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import FuncoesHash.FuncaoHashingFactory;
@@ -34,17 +35,18 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
     private final FuncaoHashingFactory.Funcao tipoFuncaoHashing;
     private final InterfaceHashing funcaoHashing;
     private final JTextArea log;
-    private Principal pai;
+    private final Principal pai;
     private long startTime;
     private long endTime;
+    private final PalavrasBanidas palavras_banidas;
 
     /**
      * Construtor
      */
-    public PreProcessamento(String caminhoArquivo, int tamanhoTabela, int limite, PalavraFactory.TipoPalavra tipoPalavra, FuncaoHashingFactory.Funcao tipoFuncaoHashing, JTextArea log, Principal pai) {
+    public PreProcessamento(String caminhoArquivo, int tamanhoTabela, int limite, PalavraFactory.TipoPalavra tipoPalavra, FuncaoHashingFactory.Funcao tipoFuncaoHashing, JTextArea log, Principal pai, String lingua) {
         this.caminhoArquivo = caminhoArquivo;
 
-        // Find a power of 2 >= tamanhoTabela
+        // Encontra uma potência de 2 >= tamanhoTabela
         int capacity = 1;
         while (capacity < tamanhoTabela) {
             capacity <<= 1;
@@ -66,6 +68,8 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         this.pai = pai;
         this.endTime = -1;
         inicializaArrayAux();
+
+        this.palavras_banidas = new PalavrasBanidas(lingua);
     }
 
     /**
@@ -77,7 +81,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
 
         publish("\n\n--== INICIANDO ==--\nAbrindo arquivo " + caminhoArquivo);
 
-        FileInputStream stream = null;
+        FileInputStream stream;
         try {
             stream = new FileInputStream(caminhoArquivo);
 
@@ -87,7 +91,6 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         }
         BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
-        // mudar de 10 para variavel!!
         TabelaHash tbHash = new TabelaHash(tamanhoTabela, limite, 13, tipoFuncaoHashing, tipoPalavra);
 
         int primeiroEspaco;
@@ -98,8 +101,6 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         int porcentagem = -1;
         int colisoes = 0;
 
-        // Cria um HashSet para Contar os caracteres únicos
-//        HashSet<Character> caracs = new HashSet<>();
         try {
             String linha;
             while ((linha = in.readLine()) != null && (contaLinhas <= limite || limite == -1)) {
@@ -140,7 +141,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
                     for (String string : palavras) {
                         String s = string;
 
-                        if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty() || !isPureAscii(s)) {
+                        if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty() || !isPureAscii(s) || this.palavras_banidas.contains(s)) {
                             numero_de_palavras_puladas++;
                             continue;
                         }
@@ -280,6 +281,8 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
             pai.setTabelaHash(get());
         } catch (InterruptedException | ExecutionException ex) {
             publish("Um erro ocorreu:\n" + ex.getMessage());
+        } finally {
+            pai.setEnabled(true);
         }
     }
 

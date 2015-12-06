@@ -1,4 +1,4 @@
-package Estruturas.Hashing;
+package Estruturas;
 
 /**
  * Estrutura que representa uma tupla id_documento - contador. id_documento é o
@@ -26,7 +26,7 @@ public class Par {
     /**
      * Incrementa em 1 o contador de ocorrências de uma palavra em um documento
      */
-    void incrementaContador() {
+    public void incrementaContador() {
         this.contador++;
     }
 

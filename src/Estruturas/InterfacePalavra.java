@@ -1,4 +1,4 @@
-package Estruturas.Hashing;
+package Estruturas;
 
 import java.util.Iterator;
 

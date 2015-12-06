@@ -1,5 +1,6 @@
-package Estruturas.Hashing;
+package Estruturas;
 
+import Estruturas.Par;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;

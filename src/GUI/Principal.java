@@ -1,7 +1,8 @@
 package GUI;
 
-import Estruturas.Hashing.PalavraFactory;
+import Estruturas.PalavraFactory;
 import Estruturas.Hashing.TabelaHash;
+import Estruturas.Trie.ASCII_Trie;
 import FuncoesHash.FuncaoHashingFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -16,12 +17,14 @@ import javax.swing.SwingWorker.StateValue;
 public class Principal extends javax.swing.JFrame {
 
     private TabelaHash tbHash;
-    private PreProcessamento preWorker;
-    private BuscarPalavra buscarWorker;
+    private ASCII_Trie trie;
 
-    /**
-     * Creates new form Principal
-     */
+    private PreProcessamentoTrie preWorkerTrie;
+    private PreProcessamento preWorkerHash;
+
+    private BuscarPalavra buscarWorker;
+    //private BuscarPalavraTrie buscarWorkerTrie;
+
     public Principal() {
         printSystemStatus();
         initComponents();
@@ -59,35 +62,53 @@ public class Principal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        panelArquivo = new javax.swing.JPanel();
+        labelArquivo = new javax.swing.JLabel();
         textoCaminho = new javax.swing.JTextField();
         botaoAbrir = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        labelLingua = new javax.swing.JLabel();
+        comboLingua = new javax.swing.JComboBox();
+        panelAbas = new javax.swing.JTabbedPane();
+        panelHash = new javax.swing.JPanel();
+        panelConfigHash = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         tamanhoTabela = new javax.swing.JTextField();
-        limiteDocumentos = new javax.swing.JTextField();
+        limiteDocumentosHash = new javax.swing.JTextField();
         tipoPalavra = new javax.swing.JComboBox();
         funcaoHashing = new javax.swing.JComboBox();
-        botaoIniciar = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        log = new javax.swing.JTextArea();
-        jPanel4 = new javax.swing.JPanel();
+        botaoIniciarHash = new javax.swing.JButton();
+        panelBuscarHash = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        textoBuscar = new javax.swing.JTextField();
-        botaoBuscarPalavra = new javax.swing.JButton();
-        barraProgresso = new javax.swing.JProgressBar();
+        textoBuscarHash = new javax.swing.JTextField();
+        botaoBuscarPalavraHash = new javax.swing.JButton();
+        barraProgressoHash = new javax.swing.JProgressBar();
+        panelLogHash = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logHash = new javax.swing.JTextArea();
+        panelTrie = new javax.swing.JPanel();
+        panelConfigTrie = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        limiteDocumentosTrie = new javax.swing.JTextField();
+        botaoIniciarTrie = new javax.swing.JButton();
+        panelLogTrie = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        logTrie = new javax.swing.JTextArea();
+        panelBuscarTrie = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        textoBuscarTrie = new javax.swing.JTextField();
+        botaoBuscarPalavraHash1 = new javax.swing.JButton();
+        barraProgressoTrie = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Índice invertido de busca");
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Arquivo:");
+        labelArquivo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelArquivo.setText("Arquivo:");
 
         textoCaminho.setText("C:\\Users\\Lucas\\Desktop\\short-abstracts_en.ttl");
 
@@ -98,27 +119,44 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        labelLingua.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        labelLingua.setText("Língua do arquivo selecionado:");
+
+        comboLingua.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inglês", "Português" }));
+
+        javax.swing.GroupLayout panelArquivoLayout = new javax.swing.GroupLayout(panelArquivo);
+        panelArquivo.setLayout(panelArquivoLayout);
+        panelArquivoLayout.setHorizontalGroup(
+            panelArquivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelArquivoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textoCaminho)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botaoAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panelArquivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelArquivoLayout.createSequentialGroup()
+                        .addComponent(labelArquivo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textoCaminho)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botaoAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelArquivoLayout.createSequentialGroup()
+                        .addComponent(labelLingua)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(comboLingua, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+        panelArquivoLayout.setVerticalGroup(
+            panelArquivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelArquivoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelArquivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelArquivo)
                     .addComponent(textoCaminho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botaoAbrir)))
+                    .addComponent(botaoAbrir))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelArquivoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelLingua)
+                    .addComponent(comboLingua, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -134,146 +172,300 @@ public class Principal extends javax.swing.JFrame {
 
         tamanhoTabela.setText("500009");
 
-        limiteDocumentos.setText("4305028");
+        limiteDocumentosHash.setText("4305028");
 
-        botaoIniciar.setText("Iniciar Leitura");
-        botaoIniciar.addActionListener(new java.awt.event.ActionListener() {
+        botaoIniciarHash.setText("Iniciar Leitura Hash");
+        botaoIniciarHash.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoIniciarActionPerformed(evt);
+                botaoIniciarHashActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelConfigHashLayout = new javax.swing.GroupLayout(panelConfigHash);
+        panelConfigHash.setLayout(panelConfigHashLayout);
+        panelConfigHashLayout.setHorizontalGroup(
+            panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelConfigHashLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConfigHashLayout.createSequentialGroup()
+                        .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(tipoPalavra, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(funcaoHashing, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(limiteDocumentos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                            .addComponent(limiteDocumentosHash, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConfigHashLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botaoIniciar))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(botaoIniciarHash))
+                    .addGroup(panelConfigHashLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(panelConfigHashLayout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addComponent(tamanhoTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        panelConfigHashLayout.setVerticalGroup(
+            panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelConfigHashLayout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tamanhoTabela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(limiteDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(limiteDocumentosHash, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(tipoPalavra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelConfigHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(funcaoHashing, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
-                .addComponent(botaoIniciar))
-        );
-
-        log.setEditable(false);
-        log.setColumns(20);
-        log.setRows(5);
-        jScrollPane1.setViewportView(log);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 861, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
+                .addComponent(botaoIniciarHash))
         );
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Buscar palavra:");
 
-        botaoBuscarPalavra.setText("Buscar");
-        botaoBuscarPalavra.addActionListener(new java.awt.event.ActionListener() {
+        botaoBuscarPalavraHash.setText("Buscar");
+        botaoBuscarPalavraHash.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoBuscarPalavraActionPerformed(evt);
+                botaoBuscarPalavraHashActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelBuscarHashLayout = new javax.swing.GroupLayout(panelBuscarHash);
+        panelBuscarHash.setLayout(panelBuscarHashLayout);
+        panelBuscarHashLayout.setHorizontalGroup(
+            panelBuscarHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBuscarHashLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(barraProgresso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(panelBuscarHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(barraProgressoHash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelBuscarHashLayout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textoBuscar)
+                        .addComponent(textoBuscarHash)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoBuscarPalavra)))
+                        .addComponent(botaoBuscarPalavraHash)))
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        panelBuscarHashLayout.setVerticalGroup(
+            panelBuscarHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBuscarHashLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelBuscarHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(textoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botaoBuscarPalavra))
+                    .addComponent(textoBuscarHash, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botaoBuscarPalavraHash))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(barraProgresso, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(barraProgressoHash, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        logHash.setEditable(false);
+        logHash.setColumns(20);
+        logHash.setRows(5);
+        jScrollPane1.setViewportView(logHash);
+
+        javax.swing.GroupLayout panelLogHashLayout = new javax.swing.GroupLayout(panelLogHash);
+        panelLogHash.setLayout(panelLogHashLayout);
+        panelLogHashLayout.setHorizontalGroup(
+            panelLogHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLogHashLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        panelLogHashLayout.setVerticalGroup(
+            panelLogHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+        );
+
+        javax.swing.GroupLayout panelHashLayout = new javax.swing.GroupLayout(panelHash);
+        panelHash.setLayout(panelHashLayout);
+        panelHashLayout.setHorizontalGroup(
+            panelHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelHashLayout.createSequentialGroup()
+                .addGroup(panelHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelHashLayout.createSequentialGroup()
+                        .addComponent(panelConfigHash, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelLogHash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelHashLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelBuscarHash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        panelHashLayout.setVerticalGroup(
+            panelHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHashLayout.createSequentialGroup()
+                .addGroup(panelHashLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelConfigHash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelLogHash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBuscarHash, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelAbas.addTab("Tabela Hash", panelHash);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setText("Configurações");
+
+        jLabel10.setText("N° de documentos a serem lidos");
+
+        limiteDocumentosTrie.setText("4305028");
+
+        botaoIniciarTrie.setText("Iniciar Leitura Trie");
+        botaoIniciarTrie.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoIniciarTrieActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelConfigTrieLayout = new javax.swing.GroupLayout(panelConfigTrie);
+        panelConfigTrie.setLayout(panelConfigTrieLayout);
+        panelConfigTrieLayout.setHorizontalGroup(
+            panelConfigTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelConfigTrieLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelConfigTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConfigTrieLayout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(limiteDocumentosTrie, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelConfigTrieLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConfigTrieLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(botaoIniciarTrie)))
+                .addContainerGap())
+        );
+        panelConfigTrieLayout.setVerticalGroup(
+            panelConfigTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelConfigTrieLayout.createSequentialGroup()
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelConfigTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(limiteDocumentosTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(botaoIniciarTrie))
+        );
+
+        logTrie.setEditable(false);
+        logTrie.setColumns(20);
+        logTrie.setRows(5);
+        jScrollPane2.setViewportView(logTrie);
+
+        javax.swing.GroupLayout panelLogTrieLayout = new javax.swing.GroupLayout(panelLogTrie);
+        panelLogTrie.setLayout(panelLogTrieLayout);
+        panelLogTrieLayout.setHorizontalGroup(
+            panelLogTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLogTrieLayout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        panelLogTrieLayout.setVerticalGroup(
+            panelLogTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+        );
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setText("Buscar palavra:");
+
+        botaoBuscarPalavraHash1.setText("Buscar");
+        botaoBuscarPalavraHash1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoBuscarPalavraHash1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBuscarTrieLayout = new javax.swing.GroupLayout(panelBuscarTrie);
+        panelBuscarTrie.setLayout(panelBuscarTrieLayout);
+        panelBuscarTrieLayout.setHorizontalGroup(
+            panelBuscarTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBuscarTrieLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBuscarTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(barraProgressoTrie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelBuscarTrieLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textoBuscarTrie)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botaoBuscarPalavraHash1)))
+                .addContainerGap())
+        );
+        panelBuscarTrieLayout.setVerticalGroup(
+            panelBuscarTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBuscarTrieLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBuscarTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(textoBuscarTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botaoBuscarPalavraHash1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(barraProgressoTrie, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout panelTrieLayout = new javax.swing.GroupLayout(panelTrie);
+        panelTrie.setLayout(panelTrieLayout);
+        panelTrieLayout.setHorizontalGroup(
+            panelTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTrieLayout.createSequentialGroup()
+                .addGroup(panelTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTrieLayout.createSequentialGroup()
+                        .addComponent(panelConfigTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelLogTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(panelTrieLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelBuscarTrie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        panelTrieLayout.setVerticalGroup(
+            panelTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTrieLayout.createSequentialGroup()
+                .addGroup(panelTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelConfigTrie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelLogTrie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBuscarTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelAbas.addTab("Trie", panelTrie);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelArquivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(panelAbas)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(panelArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelAbas, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE))
         );
 
         pack();
@@ -294,83 +486,20 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoAbrirActionPerformed
 
     /**
-     * Inicia o pre processamento
+     * Inicia a busca por uma palavra na tabela hash.
      */
-    private void botaoIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIniciarActionPerformed
-
-        // Limpa a tabela hash atual
-        tbHash = null;
-
-        // Chama o Garbage Collector
-        System.gc();
-
-        // Desabilita os botões
-        botaoIniciar.setEnabled(false);
-        botaoAbrir.setEnabled(false);
-
-        // Pega os campos de configuracao
-        String caminho = textoCaminho.getText();
-        int tamanho = Integer.parseInt(tamanhoTabela.getText());
-        int limite = Integer.parseInt(limiteDocumentos.getText());
-        FuncaoHashingFactory.Funcao funcao = (FuncaoHashingFactory.Funcao) funcaoHashing.getSelectedItem();
-        PalavraFactory.TipoPalavra palavra = (PalavraFactory.TipoPalavra) tipoPalavra.getSelectedItem();
-
-        // Cria worker thread
-//        preWorker = new PreProcessamentoTrie(caminho, limite, log, this);
-        preWorker = new PreProcessamento(caminho, tamanho, limite, palavra, funcao, log, this);
-
-        // Cria um Listener para receber os eventos enviados pelo worker thread
-        preWorker.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(final PropertyChangeEvent event) {
-                switch (event.getPropertyName()) {
-                    case "progress":
-                        // Atualiza a barra de progresso
-                        barraProgresso.setIndeterminate(false);
-                        barraProgresso.setValue((Integer) event.getNewValue());
-                        break;
-                    case "state":
-                        switch ((StateValue) event.getNewValue()) {
-                            case DONE:
-                                // Finaliza
-                                barraProgresso.setIndeterminate(false);
-                                barraProgresso.setValue(0);
-                                botaoIniciar.setEnabled(true);
-                                botaoAbrir.setEnabled(true);
-                                preWorker = null;
-                                break;
-                            case STARTED:
-                            case PENDING:
-                                // Em processo de inicialização
-                                barraProgresso.setIndeterminate(true);
-                                break;
-                        }
-                        break;
-                }
-            }
-        });
-
-        // Inicia o worker thread
-        preWorker.execute();
-
-
-    }//GEN-LAST:event_botaoIniciarActionPerformed
-
-    /**
-     * Inicia a busca por uma palavra na tabela.
-     */
-    private void botaoBuscarPalavraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraActionPerformed
-        if (tbHash == null || textoBuscar.getText() == null || textoBuscar.getText().isEmpty()) {
+    private void botaoBuscarPalavraHashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraHashActionPerformed
+        if (tbHash == null || textoBuscarHash.getText() == null || textoBuscarHash.getText().isEmpty()) {
             return;
         }
         // Desabilita os botões
-        botaoIniciar.setEnabled(false);
-        botaoBuscarPalavra.setEnabled(false);
+        botaoIniciarHash.setEnabled(false);
+        botaoBuscarPalavraHash.setEnabled(false);
 
-        log.append("\nIniciando busca usando os termos: " + textoBuscar.getText() + "\n");
+        logHash.append("\nIniciando busca usando os termos: " + textoBuscarHash.getText() + "\n");
 
         // Cria worker thread
-        buscarWorker = new BuscarPalavra(log, textoBuscar.getText().split(" "), tbHash);
+        buscarWorker = new BuscarPalavra(logHash, textoBuscarHash.getText().split(" "), tbHash);
 
         // Cria um Listener para receber os eventos enviados pelo worker thread
         buscarWorker.addPropertyChangeListener(new PropertyChangeListener() {
@@ -379,23 +508,23 @@ public class Principal extends javax.swing.JFrame {
                 switch (event.getPropertyName()) {
                     case "progress":
                         // Atualiza a barra de progresso
-                        barraProgresso.setIndeterminate(false);
-                        barraProgresso.setValue((Integer) event.getNewValue());
+                        barraProgressoHash.setIndeterminate(false);
+                        barraProgressoHash.setValue((Integer) event.getNewValue());
                         break;
                     case "state":
                         switch ((StateValue) event.getNewValue()) {
                             case DONE:
                                 // Finaliza
-                                barraProgresso.setIndeterminate(false);
-                                barraProgresso.setValue(0);
-                                botaoIniciar.setEnabled(true);
-                                botaoBuscarPalavra.setEnabled(true);
+                                barraProgressoHash.setIndeterminate(false);
+                                barraProgressoHash.setValue(0);
+                                botaoIniciarHash.setEnabled(true);
+                                botaoBuscarPalavraHash.setEnabled(true);
                                 buscarWorker = null;
                                 break;
                             case STARTED:
                             case PENDING:
                                 // Em processo de inicialização
-                                barraProgresso.setIndeterminate(true);
+                                barraProgressoHash.setIndeterminate(true);
                                 break;
                         }
                         break;
@@ -405,13 +534,183 @@ public class Principal extends javax.swing.JFrame {
 
         // Inicia o worker thread
         buscarWorker.execute();
-    }//GEN-LAST:event_botaoBuscarPalavraActionPerformed
+    }//GEN-LAST:event_botaoBuscarPalavraHashActionPerformed
+
+    /**
+     * Cria a tabela hash
+     */
+    private void botaoIniciarHashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIniciarHashActionPerformed
+
+        //Desabilita a janela
+        this.setEnabled(false);
+
+        // Limpa a tabela hash e a trie
+        tbHash = null;
+        trie = null;
+
+        // Indica o Garbage Collector
+        System.gc();
+
+        // Pega os campos de configuracao
+        String caminho = textoCaminho.getText();
+        int tamanho = Integer.parseInt(tamanhoTabela.getText());
+        int limite = Integer.parseInt(limiteDocumentosHash.getText());
+        FuncaoHashingFactory.Funcao funcao = (FuncaoHashingFactory.Funcao) funcaoHashing.getSelectedItem();
+        PalavraFactory.TipoPalavra palavra = (PalavraFactory.TipoPalavra) tipoPalavra.getSelectedItem();
+        String lingua = (String) this.comboLingua.getSelectedItem();
+
+        // Cria worker thread
+        //        preWorker = new PreProcessamentoTrie(caminho, limite, log, this);
+        preWorkerHash = new PreProcessamento(caminho, tamanho, limite, palavra, funcao, logHash, this, lingua);
+
+        // Cria um Listener para receber os eventos enviados pelo worker thread
+        preWorkerHash.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                switch (event.getPropertyName()) {
+                    case "progress":
+                        // Atualiza a barra de progresso
+                        barraProgressoHash.setIndeterminate(false);
+                        barraProgressoHash.setValue((Integer) event.getNewValue());
+                        break;
+                    case "state":
+                        switch ((StateValue) event.getNewValue()) {
+                            case DONE:
+                                // Finaliza
+                                barraProgressoHash.setIndeterminate(false);
+                                barraProgressoHash.setValue(0);
+                                preWorkerHash = null;
+                                break;
+                            case STARTED:
+                            case PENDING:
+                                // Em processo de inicialização
+                                barraProgressoHash.setIndeterminate(true);
+                                break;
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Inicia o worker thread
+        preWorkerHash.execute();
+
+    }//GEN-LAST:event_botaoIniciarHashActionPerformed
+
+    /**
+     * Cria a trie
+     */
+    private void botaoIniciarTrieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIniciarTrieActionPerformed
+        //Desabilita a janela
+        this.setEnabled(false);
+
+        // Limpa a tabela hash e a trie
+        tbHash = null;
+        trie = null;
+
+        // Indica o Garbage Collector
+        System.gc();
+
+        // Pega os campos de configuracao
+        String caminho = textoCaminho.getText();
+        int limite = Integer.parseInt(limiteDocumentosTrie.getText());
+        String lingua = (String) this.comboLingua.getSelectedItem();
+
+        // Cria worker thread
+        preWorkerTrie = new PreProcessamentoTrie(caminho, limite, logTrie, this, lingua);
+
+        // Cria um Listener para receber os eventos enviados pelo worker thread
+        preWorkerTrie.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                switch (event.getPropertyName()) {
+                    case "progress":
+                        // Atualiza a barra de progresso
+                        barraProgressoTrie.setIndeterminate(false);
+                        barraProgressoTrie.setValue((Integer) event.getNewValue());
+                        break;
+                    case "state":
+                        switch ((StateValue) event.getNewValue()) {
+                            case DONE:
+                                // Finaliza
+                                barraProgressoTrie.setIndeterminate(false);
+                                barraProgressoTrie.setValue(0);
+                                preWorkerTrie = null;
+                                break;
+                            case STARTED:
+                            case PENDING:
+                                // Em processo de inicialização
+                                barraProgressoTrie.setIndeterminate(true);
+                                break;
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Inicia o worker thread
+        preWorkerTrie.execute();
+
+    }//GEN-LAST:event_botaoIniciarTrieActionPerformed
+
+    /**
+     * Arrumar esse metodo para funcionar na trie!!
+     */
+    private void botaoBuscarPalavraHash1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraHash1ActionPerformed
+        if (trie == null || textoBuscarTrie.getText() == null || textoBuscarTrie.getText().isEmpty()) {
+            return;
+        }
+
+        logTrie.append("\nIniciando busca usando os termos: " + textoBuscarTrie.getText() + "\n");
+
+        // Cria worker thread
+        buscarWorker = new BuscarPalavra(logHash, textoBuscarHash.getText().split(" "), tbHash);
+
+        // Cria um Listener para receber os eventos enviados pelo worker thread
+        buscarWorker.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                switch (event.getPropertyName()) {
+                    case "progress":
+                        // Atualiza a barra de progresso
+                        barraProgressoTrie.setIndeterminate(false);
+                        barraProgressoTrie.setValue((Integer) event.getNewValue());
+                        break;
+                    case "state":
+                        switch ((StateValue) event.getNewValue()) {
+                            case DONE:
+                                // Finaliza
+                                barraProgressoTrie.setIndeterminate(false);
+                                barraProgressoTrie.setValue(0);
+                                buscarWorker = null;
+                                break;
+                            case STARTED:
+                            case PENDING:
+                                // Em processo de inicialização
+                                barraProgressoTrie.setIndeterminate(true);
+                                break;
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Inicia o worker thread
+        buscarWorker.execute();
+    }//GEN-LAST:event_botaoBuscarPalavraHash1ActionPerformed
 
     /**
      * Recebe a tabela Hash criada pela worker thread
      */
     public void setTabelaHash(TabelaHash tb) {
         this.tbHash = tb;
+    }
+
+    /**
+     * Recebe a Trie criada pela worker thread
+     */
+    public void setTrie(ASCII_Trie trie) {
+        this.trie = trie;
     }
 
     /**
@@ -450,27 +749,45 @@ public class Principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JProgressBar barraProgresso;
+    private javax.swing.JProgressBar barraProgressoHash;
+    private javax.swing.JProgressBar barraProgressoTrie;
     private javax.swing.JButton botaoAbrir;
-    private javax.swing.JButton botaoBuscarPalavra;
-    private javax.swing.JButton botaoIniciar;
+    private javax.swing.JButton botaoBuscarPalavraHash;
+    private javax.swing.JButton botaoBuscarPalavraHash1;
+    private javax.swing.JButton botaoIniciarHash;
+    private javax.swing.JButton botaoIniciarTrie;
+    private javax.swing.JComboBox comboLingua;
     private javax.swing.JComboBox funcaoHashing;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField limiteDocumentos;
-    private javax.swing.JTextArea log;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel labelArquivo;
+    private javax.swing.JLabel labelLingua;
+    private javax.swing.JTextField limiteDocumentosHash;
+    private javax.swing.JTextField limiteDocumentosTrie;
+    private javax.swing.JTextArea logHash;
+    private javax.swing.JTextArea logTrie;
+    private javax.swing.JTabbedPane panelAbas;
+    private javax.swing.JPanel panelArquivo;
+    private javax.swing.JPanel panelBuscarHash;
+    private javax.swing.JPanel panelBuscarTrie;
+    private javax.swing.JPanel panelConfigHash;
+    private javax.swing.JPanel panelConfigTrie;
+    private javax.swing.JPanel panelHash;
+    private javax.swing.JPanel panelLogHash;
+    private javax.swing.JPanel panelLogTrie;
+    private javax.swing.JPanel panelTrie;
     private javax.swing.JTextField tamanhoTabela;
-    private javax.swing.JTextField textoBuscar;
+    private javax.swing.JTextField textoBuscarHash;
+    private javax.swing.JTextField textoBuscarTrie;
     private javax.swing.JTextField textoCaminho;
     private javax.swing.JComboBox tipoPalavra;
     // End of variables declaration//GEN-END:variables

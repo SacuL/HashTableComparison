@@ -1,4 +1,8 @@
-package Estruturas.Hashing;
+package Estruturas;
+
+import Estruturas.InterfacePalavra;
+import Estruturas.PalavraList;
+import Estruturas.PalavraMap;
 
 /**
  *
