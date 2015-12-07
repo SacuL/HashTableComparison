@@ -282,7 +282,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="limiteDocumentosHash">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="4305028"/>
+                    <Property name="text" type="java.lang.String" value="1000000"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="tipoPalavra">
@@ -498,7 +498,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="limiteDocumentosTrie">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="4305028"/>
+                    <Property name="text" type="java.lang.String" value="1000000"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="botaoIniciarTrie">
@@ -561,7 +561,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="textoBuscarTrie" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="botaoBuscarPalavraHash1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="botaoBuscarPalavraTrie" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -575,7 +575,7 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="textoBuscarTrie" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="botaoBuscarPalavraHash1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="botaoBuscarPalavraTrie" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="barraProgressoTrie" min="-2" pref="22" max="-2" attributes="0"/>
@@ -595,12 +595,12 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="textoBuscarTrie">
                 </Component>
-                <Component class="javax.swing.JButton" name="botaoBuscarPalavraHash1">
+                <Component class="javax.swing.JButton" name="botaoBuscarPalavraTrie">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Buscar"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoBuscarPalavraHash1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoBuscarPalavraTrieActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JProgressBar" name="barraProgressoTrie">

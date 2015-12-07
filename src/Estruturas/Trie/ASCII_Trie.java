@@ -1,6 +1,7 @@
 package Estruturas.Trie;
 
 import Estruturas.Documento;
+import Estruturas.InterfacePalavra;
 import java.util.ArrayList;
 
 public class ASCII_Trie {
@@ -16,7 +17,6 @@ public class ASCII_Trie {
 
         if (numero_documentos < 0) {
             this.documentos = new ArrayList<>(numero_documentos);
-            //this.logDoTotalDeDocumentos = Math.log10(numero_documentos);
         } else {
             this.documentos = new ArrayList<>();
         }
@@ -25,6 +25,41 @@ public class ASCII_Trie {
 
     public void insereDocumento(Documento doc, int id_documento) {
         this.documentos.add(id_documento, doc);
+    }
+
+    public double log2NumeroTotalDeDocumentos() {
+        return this.logDoTotalDeDocumentos;
+    }
+
+    public PalavraMapTrie buscarPalavra(String p) {
+        int TAMANHO_CHAVE = 20;
+        No[] nos = raiz.filhos;
+        for (int i = 0; i < TAMANHO_CHAVE; i++) {
+            int posicao = posicaoASCII(p.charAt(i));
+            if (nos[posicao] == null) {
+                // Palavra nao encontrada
+                return null;
+            } else {
+                if (nos[posicao] instanceof NoFolha) {
+                    // Palavra encontrada
+                    return ((NoFolha) nos[posicao]).ocorrencias;
+                } else {
+                    nos = ((NoInterno) nos[posicao]).filhos;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retorna o número de termos distintos do documento
+     */
+    public int numeroTermosDistintosDocumento(int id_documento) {
+        return this.documentos.get(id_documento).getNumeroDeTermosDistintos();
+    }
+
+    public Documento getDocumento(int id_documento) {
+        return documentos.get(id_documento);
     }
 
     /////////////////////////////////////
@@ -123,7 +158,6 @@ public class ASCII_Trie {
 
         return novoNo;
     }
-
 
     private int posicaoASCII(char c) {
         return (tabelaASCII[(int) c]);
@@ -344,10 +378,10 @@ public class ASCII_Trie {
         126
     };
 
-    public void calculaLog10NumeroDocumentos() {
+    public void calculaLog2NumeroDocumentos() {
         System.out.print(" -> " + this.documentos.size() + " documentos foram lidos.");
-        this.logDoTotalDeDocumentos = Math.log10(documentos.size());
-        System.out.println(" Log10(" + this.documentos.size() + ")=" + this.logDoTotalDeDocumentos);
+        this.logDoTotalDeDocumentos = Math.log(this.documentos.size()) / Math.log(2);
+        System.out.println(" Log2(" + this.documentos.size() + ")=" + this.logDoTotalDeDocumentos);
     }
 
 }

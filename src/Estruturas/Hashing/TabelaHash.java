@@ -39,7 +39,6 @@ public class TabelaHash {
         this.array = (ArrayList<InterfacePalavra>[]) new ArrayList[tam];
         if (limite > 0) {
             this.documentos = new ArrayList<>(limite);
-            this.logDoTotalDeDocumentos = Math.log10(limite);
         } else {
             this.documentos = new ArrayList<>();
         }

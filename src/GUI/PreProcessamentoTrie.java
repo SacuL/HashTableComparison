@@ -76,15 +76,21 @@ public class PreProcessamentoTrie extends SwingWorker<ASCII_Trie, String> {
         int contaLinhas = 0;
         int porcentagem = -1;
 
+        double umPorcento = numero_documentos / 100;
+        double porcentual = umPorcento;
+
         try {
             String linha;
             while ((linha = in.readLine()) != null && (contaLinhas <= numero_documentos || numero_documentos == -1)) {
 
-                if (numero_documentos != -1 && (contaLinhas % (((double) ((double) numero_documentos) / 100)) == 0)) {
+                // Anda com a barra de progresso
+                if (numero_documentos != -1 && (contaLinhas >= porcentual)) {
                     porcentagem++;
                     setProgress(porcentagem);
+                    porcentual = porcentual + umPorcento;
                 }
 
+                // Ignora linhas sem conteudo
                 if (linha.length() < 77) {
                     publish("Linha nao usada: " + linha);
                 } else {
@@ -156,7 +162,7 @@ public class PreProcessamentoTrie extends SwingWorker<ASCII_Trie, String> {
         }
 
         trie.imprimeChaves();
-        trie.calculaLog10NumeroDocumentos();
+        trie.calculaLog2NumeroDocumentos();
 
         publish("Numero de linhas arquivo: " + contaLinhas);
         publish("Numero total de palavras: " + numero_de_palavras);
@@ -203,12 +209,12 @@ public class PreProcessamentoTrie extends SwingWorker<ASCII_Trie, String> {
         }
         long segundosFinais = (endTime - startTime) / 1000;
         int minutosFinais = 0;
-        while (segundosFinais > 60) {
+        while (segundosFinais >= 60) {
             segundosFinais = segundosFinais - 60;
             minutosFinais++;
         }
         if (minutosFinais > 0) {
-            publish("Tempo de execução: " + minutosFinais + ":" + segundosFinais);
+            publish("Tempo de execução: " + minutosFinais + " minuto(s) e " + segundosFinais + " segundo(s).");
         } else {
             publish("Tempo de execução: " + segundosFinais + " segundo(s).");
         }

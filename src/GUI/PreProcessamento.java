@@ -101,16 +101,21 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         int porcentagem = -1;
         int colisoes = 0;
 
+        double umPorcento = limite / 100;
+        double porcentual = umPorcento;
+
         try {
             String linha;
             while ((linha = in.readLine()) != null && (contaLinhas <= limite || limite == -1)) {
 
                 // Anda com a barra de progresso
-                if (limite != -1 && (contaLinhas % (((double) ((double) limite) / 100)) == 0)) {
+                if (limite != -1 && (contaLinhas >= porcentual)) {
                     porcentagem++;
                     setProgress(porcentagem);
+                    porcentual = porcentual + umPorcento;
                 }
 
+                // Ignora linhas sem conteudo
                 if (linha.length() < 77) {
                     publish("Linha nao usada: " + linha);
                 } else {
@@ -144,6 +149,13 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
                         if (s.isEmpty() || (s.replaceAll(" ", "")).isEmpty() || !isPureAscii(s) || this.palavras_banidas.contains(s)) {
                             numero_de_palavras_puladas++;
                             continue;
+                        }
+
+                        // Ajusta para o tamanho de 20 caracteres (completando espaços caso necessário)
+                        if (s.length() < 20) {
+                            s = s + arrayAux[s.length()];
+                        } else {
+                            s = s.substring(0, 20);
                         }
 
                         // Insere no hashset para contar palavras únicas
@@ -193,7 +205,7 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         publish("Porcentual de colisões: " + (100 * colisoes / tbHash.getNumeroDePalavrasUnicas()));
         publish("Numero total de palavras: " + numero_de_palavras);
         publish("Numero de palavras puladas: " + numero_de_palavras_puladas);
-        publish("Numero de palavras inserid: " + (numero_de_palavras - numero_de_palavras_puladas));
+        publish("Numero de palavras inserid: " + (numero_de_palavras - numero_de_palavras_puladas - colisoes));
         publish("Numero de espaços totais: " + (tamanhoTabela));
 
         double qtd = ((double) colisoes / (double) tamanhoTabela);
@@ -267,12 +279,12 @@ public class PreProcessamento extends SwingWorker<TabelaHash, String> {
         }
         long segundosFinais = (endTime - startTime) / 1000;
         int minutosFinais = 0;
-        while (segundosFinais > 60) {
+        while (segundosFinais >= 60) {
             segundosFinais = segundosFinais - 60;
             minutosFinais++;
         }
         if (minutosFinais > 0) {
-            publish("Tempo de execução: " + minutosFinais + ":" + segundosFinais);
+            publish("Tempo de execução: " + minutosFinais + "minuto(s) e " + segundosFinais + " segundo(s).");
         } else {
             publish("Tempo de execução: " + segundosFinais + " segundo(s).");
         }

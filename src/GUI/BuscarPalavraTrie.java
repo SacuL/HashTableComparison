@@ -1,7 +1,7 @@
 package GUI;
 
-import Estruturas.InterfacePalavra;
-import Estruturas.Hashing.TabelaHash;
+import Estruturas.Trie.ASCII_Trie;
+import Estruturas.Trie.PalavraMapTrie;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,19 +16,19 @@ import javax.swing.JTextArea;
  *
  * @author Lucas
  */
-public class BuscarPalavra extends SwingWorker<Integer, String> {
+public class BuscarPalavraTrie extends SwingWorker<Double, String> {
 
     private final JTextArea log;
     private final String[] palavras;
-    private final TabelaHash tbHash;
+    private final ASCII_Trie trie;
 
     /**
      * Construtor
      */
-    public BuscarPalavra(JTextArea log, String[] palavras, TabelaHash tbHash) {
+    public BuscarPalavraTrie(JTextArea log, String[] palavras, ASCII_Trie trie) {
         this.log = log;
         this.palavras = palavras;
-        this.tbHash = tbHash;
+        this.trie = trie;
         inicializaArrayAux();
     }
 
@@ -36,11 +36,11 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
      * Método que realiza a busca das palavra.
      */
     @Override
-    protected Integer doInBackground() throws Exception {
+    protected Double doInBackground() throws Exception {
 
         long inicio = System.nanoTime();
 
-        double logN = tbHash.log2NumeroTotalDeDocumentos();
+        double logN = trie.log2NumeroTotalDeDocumentos();
 
         // Cria um hashmap para guardar: id_documento : relevância
         HashMap<Integer, Double> docs = new HashMap<>();
@@ -55,7 +55,7 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
             }
 
             // Busca o objeto Palavra da palavra correspondente
-            InterfacePalavra p = tbHash.buscarPalavra(s);
+            PalavraMapTrie p = trie.buscarPalavra(s);
             if (p == null) {
                 publish("A palavra " + s + " não foi encontrada em nenhum documento!");
                 continue;
@@ -97,7 +97,7 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
         // pelo número de termos distintos de cada documento
         for (Map.Entry<Integer, Double> i : docs.entrySet()) {
             // Busca o número de termos distintos do documento
-            int numTermosDistintosDoDocumento = tbHash.numeroTermosDistintosDocumento(i.getKey());
+            int numTermosDistintosDoDocumento = trie.numeroTermosDistintosDocumento(i.getKey());
 
             // Substitui pelo novo valor
             docs.put(i.getKey(), (i.getValue() / numTermosDistintosDoDocumento));
@@ -128,7 +128,7 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
                     docs.remove(key);
                     mapKeys.remove(key);
 
-                    publish(tbHash.getDocumento(Integer.parseInt(key.toString())).getNome() + "\t\t" + comp1);
+                    publish(trie.getDocumento(Integer.parseInt(key.toString())).getNome() + "\t\t" + comp1);
                     break;
                 }
 
@@ -137,7 +137,7 @@ public class BuscarPalavra extends SwingWorker<Integer, String> {
         }
 
         publish(mapValues.size() + " resultados em " + (new DecimalFormat("#.##########").format(seconds)) + " segundo(s).");
-        return null;
+        return total;
     }
 
     /**

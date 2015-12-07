@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingWorker.StateValue;
 
 /**
+ * 626966
  *
  * @author Lucas
  */
@@ -23,7 +24,7 @@ public class Principal extends javax.swing.JFrame {
     private PreProcessamento preWorkerHash;
 
     private BuscarPalavra buscarWorker;
-    //private BuscarPalavraTrie buscarWorkerTrie;
+    private BuscarPalavraTrie buscarWorkerTrie;
 
     public Principal() {
         printSystemStatus();
@@ -101,7 +102,7 @@ public class Principal extends javax.swing.JFrame {
         panelBuscarTrie = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         textoBuscarTrie = new javax.swing.JTextField();
-        botaoBuscarPalavraHash1 = new javax.swing.JButton();
+        botaoBuscarPalavraTrie = new javax.swing.JButton();
         barraProgressoTrie = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -172,7 +173,7 @@ public class Principal extends javax.swing.JFrame {
 
         tamanhoTabela.setText("500009");
 
-        limiteDocumentosHash.setText("4305028");
+        limiteDocumentosHash.setText("1000000");
 
         botaoIniciarHash.setText("Iniciar Leitura Hash");
         botaoIniciarHash.addActionListener(new java.awt.event.ActionListener() {
@@ -324,7 +325,7 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel10.setText("N° de documentos a serem lidos");
 
-        limiteDocumentosTrie.setText("4305028");
+        limiteDocumentosTrie.setText("1000000");
 
         botaoIniciarTrie.setText("Iniciar Leitura Trie");
         botaoIniciarTrie.addActionListener(new java.awt.event.ActionListener() {
@@ -385,10 +386,10 @@ public class Principal extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("Buscar palavra:");
 
-        botaoBuscarPalavraHash1.setText("Buscar");
-        botaoBuscarPalavraHash1.addActionListener(new java.awt.event.ActionListener() {
+        botaoBuscarPalavraTrie.setText("Buscar");
+        botaoBuscarPalavraTrie.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoBuscarPalavraHash1ActionPerformed(evt);
+                botaoBuscarPalavraTrieActionPerformed(evt);
             }
         });
 
@@ -405,7 +406,7 @@ public class Principal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(textoBuscarTrie)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoBuscarPalavraHash1)))
+                        .addComponent(botaoBuscarPalavraTrie)))
                 .addContainerGap())
         );
         panelBuscarTrieLayout.setVerticalGroup(
@@ -415,7 +416,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(panelBuscarTrieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(textoBuscarTrie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botaoBuscarPalavraHash1))
+                    .addComponent(botaoBuscarPalavraTrie))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barraProgressoTrie, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -489,6 +490,14 @@ public class Principal extends javax.swing.JFrame {
      * Inicia a busca por uma palavra na tabela hash.
      */
     private void botaoBuscarPalavraHashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraHashActionPerformed
+
+//        if (true) {
+//            ContaBuscas a = new ContaBuscas(tbHash);
+//            Thread b = new Thread(a);
+//            b.start();
+//            return;
+//        }
+
         if (tbHash == null || textoBuscarHash.getText() == null || textoBuscarHash.getText().isEmpty()) {
             return;
         }
@@ -654,9 +663,17 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoIniciarTrieActionPerformed
 
     /**
-     * Arrumar esse metodo para funcionar na trie!!
+     * Busca palavras na trie
      */
-    private void botaoBuscarPalavraHash1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraHash1ActionPerformed
+    private void botaoBuscarPalavraTrieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoBuscarPalavraTrieActionPerformed
+
+//        if (true) {
+//            ContaBuscasTrie a = new ContaBuscasTrie(trie);
+//            Thread b = new Thread(a);
+//            b.start();
+//            return;
+//        }
+
         if (trie == null || textoBuscarTrie.getText() == null || textoBuscarTrie.getText().isEmpty()) {
             return;
         }
@@ -664,10 +681,10 @@ public class Principal extends javax.swing.JFrame {
         logTrie.append("\nIniciando busca usando os termos: " + textoBuscarTrie.getText() + "\n");
 
         // Cria worker thread
-        buscarWorker = new BuscarPalavra(logHash, textoBuscarHash.getText().split(" "), tbHash);
+        buscarWorkerTrie = new BuscarPalavraTrie(logTrie, textoBuscarTrie.getText().split(" "), trie);
 
         // Cria um Listener para receber os eventos enviados pelo worker thread
-        buscarWorker.addPropertyChangeListener(new PropertyChangeListener() {
+        buscarWorkerTrie.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
                 switch (event.getPropertyName()) {
@@ -696,8 +713,8 @@ public class Principal extends javax.swing.JFrame {
         });
 
         // Inicia o worker thread
-        buscarWorker.execute();
-    }//GEN-LAST:event_botaoBuscarPalavraHash1ActionPerformed
+        buscarWorkerTrie.execute();
+    }//GEN-LAST:event_botaoBuscarPalavraTrieActionPerformed
 
     /**
      * Recebe a tabela Hash criada pela worker thread
@@ -753,7 +770,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JProgressBar barraProgressoTrie;
     private javax.swing.JButton botaoAbrir;
     private javax.swing.JButton botaoBuscarPalavraHash;
-    private javax.swing.JButton botaoBuscarPalavraHash1;
+    private javax.swing.JButton botaoBuscarPalavraTrie;
     private javax.swing.JButton botaoIniciarHash;
     private javax.swing.JButton botaoIniciarTrie;
     private javax.swing.JComboBox comboLingua;
